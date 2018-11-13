@@ -1,0 +1,8 @@
+{{ partial "header.html" . }}
+{{ range $index, $page := (sort (where (where .Site.Pages "Section" "introductions") ".Params.hidden" "!=" "true" ) ".Params.position" "ascs")  }}
+{{ .Render "introduction" }}
+{{ end }}
+
+<a href='tutorials'>Let's get started ...</a>
+
+{{ partial "footer.html" . }}

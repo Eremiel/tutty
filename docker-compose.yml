@@ -1,10 +1,12 @@
 version: "3"
 
 services:
-  wetty:
+  web:
     build: .
-    image: butlerx/wetty
-    container_name: wetty
+    command: sh -c "NODE_ENV=development yarn --dev && hugo && node bin"
+    volumes:
+      - .:/app
+      - /app/node_modules
     tty: true
     working_dir: /app
     ports:

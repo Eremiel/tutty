@@ -11,7 +11,9 @@ tmp
 pids
 logs
 results
+public 
 
 npm-debug.log
 node_modules/*
 .esm-cache
+.DS*
