@@ -34,7 +34,9 @@ Purpose: validates the authentication cookie
 */
 export function validateAuthToken(token) {
   
-  return (token === undefined) ? undefined : jwt.verify(token, config.PUBLIC_KEY.trim(), { algorithms: ['RS256'] });
+  if (token === undefined) throw new Error("Invalid token [undefined]");
+
+  return jwt.verify(token, config.PUBLIC_KEY.trim(), { algorithms: ['RS256'] });
 }
 
 /*

@@ -44,14 +44,14 @@ app.get(config.CALLBACK_PATH, (req,res) => {
 app.use(cookieParser());
 app.use( (req, res, next) => {
   const token = req.cookies['authToken'];
-  var cookie = validateAuthToken(token);
-
-  if (cookie === undefined) {
+  try {
+    validateAuthToken(token);
+  } catch (err) {
     res.redirect(config.LOGIN_PATH);
     res.send();
-  } else {
-    next();
   }
+  
+  next();
 });
 
 // For serving css and javascript
