@@ -3,11 +3,12 @@ version: "3"
 services:
   web:
     build: .
-    command: sh -c "yarn --dev && hugo && NODE_ENV=development node bin"
+    command: sh -c "yarn install && NODE_ENV=development yarn start"
+    container_name: node
     volumes:
       - .:/app
       - /app/node_modules
-      - /app/public
+      - ./public:/app/public
     tty: true
     working_dir: /app
     ports:
@@ -16,3 +17,15 @@ services:
       PORT: 3000
       SSHHOST: 'localhost'
       SSHPORT: 22
+  hugo:
+    container_name: hugo
+    image: klakegg/hugo:latest
+    command: --watch
+    volumes:
+      - .:/src
+      - ./public:/target
+    ports:
+      - "1313:1313"
+volumes:
+  public:
+
