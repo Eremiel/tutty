@@ -25,7 +25,7 @@ The input file is sectioned into `NAMELIST`s. There are three **mandatory** `NAM
 There are three *mandatory* `CARD`s:
 
 - `ATOMIC_SPECIES` contains information about the atoms. At the moment, this is only Cu. You will see the symbol for copper, it's atomic mass, and a filename describing the core electrons. More on this later.
-- `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. Note that we have only one atom specified although the FCC unit cell contains four atoms. We have already told the code that we have an FCC lattice (`ibrav=2` under `@SYSTEM`), and all atoms in an FCC unit cell are related by symmetry. So you only need to specify the unique atoms per unit cell.
+- `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. So you only need to specify the unique atoms per unit cell.
 - `K_POINTS` defines the number of points and weights used for the first [Brillouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). Parts of the calculations are performed in reciprocal space, and the the `K_POINTS` card defines the accuracy (and cost) of these.
 
 ## Control namelist
@@ -75,3 +75,14 @@ The bassis set is truncated by dropping plane-waves with an energy larger than t
 Computation of the charge density is also supported by a plane-wave basis with substantially higher energy cutoff (`ecutrho = 300`). 
 
 In general, energy cut-offs need to be tested for convergence, but there are [guidelines](https://www.quantum-espresso.org/Doc/INPUT_PW.html#idm45922794555488) for sensible starting points.
+
+## Electrons namelist
+
+## Atomic species
+
+## Atomic positions
+
+Note that we have only one atom specified although the FCC unit cell contains four atoms. We have already told the code that we have an FCC lattice (`ibrav=2` under `@SYSTEM`), and all atoms in an FCC unit cell are related by symmetry.
+
+## K-point mesh
+
