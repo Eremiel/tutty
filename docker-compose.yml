@@ -3,7 +3,7 @@ version: "3"
 services:
   web:
     build: .
-    command: sh -c "NODE_ENV=development yarn --dev && hugo && node bin"
+    command: sh -c "yarn --dev && hugo && NODE_ENV=development node bin"
     volumes:
       - .:/app
       - /app/node_modules

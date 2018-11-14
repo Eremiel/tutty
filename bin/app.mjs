@@ -7,10 +7,12 @@ import { spawn } from 'node-pty';
 import EventEmitter from 'events';
 import favicon from 'serve-favicon';
 import githubOAuth from 'github-oauth';
-import {githubUsername,validateCookie} from './oauth';
+import {githubUsername,validateAuthToken, createAuthToken} from './oauth.mjs';
+const { exec } = require('child_process');
 var jwt = require('jsonwebtoken');
 import cookieParser from 'cookie-parser';
- 
+var cookie = require('cookie')
+
 var config = require('./config.json');
 
 /****************************************************************************************
@@ -41,13 +43,13 @@ app.get(config.CALLBACK_PATH, (req,res) => {
 // Check if authentication cookie is configured and redirect if not
 app.use(cookieParser());
 app.use( (req, res, next) => {
-  var cookie = validateCookie(req);
+  const token = req.cookies['authToken'];
+  var cookie = validateAuthToken(token);
 
   if (cookie === undefined) {
     res.redirect(config.LOGIN_PATH);
     res.send();
   } else {
-    //console.log("Authentication cookie: %j", cookie)
     next();
   }
 });
@@ -64,18 +66,7 @@ oauth.on('token', function(token, res) {
   // Then redirect to landing page
   githubUsername(token)
     .then( (username) => {
-        res.cookie('authToken', jwt.sign(
-          { username: username,
-            lastAuthenticatedOn: new Date()
-          },
-          config.PRIVATE_KEY.trim(),
-          {
-            audience: config.APPNAME,
-            subject: username,
-            expiresIn: config.SESSION_DURATION,
-            algorithm: 'RS256'
-          } // Options
-        ));
+        res.cookie('authToken', createAuthToken(username));
         res.redirect(config.AUTH_REQUEST.redirect_uri);
         res.send();
         console.log(`Validated new login for user: ${username}`);
@@ -109,17 +100,32 @@ function createServer(port, sslopts) {
     });
 }
 
-function getCommand(socket) {
-  const { request } = socket;
-  
-  //TODO Need to get this from an oauth token
-  //cookie = validateCookie(socket.handshake.headers.cookie['authToken']);
+function ensureUserEnvironment(username) {
 
-  //const user = cookie.sub;
-  //console.log(`Preparing login shell for ${user}`)
+  // TODO Need to find way to ensure same UID and GID across instances to share home directories
+  //      Current idea: use a redis instance to manage UIDs and GIDs
+  exec(`id -u ${username} &>/dev/null || adduser -s /bin/bash -h /home/${username} -D ${username}`, (err, stdout, stderr) => {
+    if (err) {
+      throw new Error(err);
+    }
+  });
+}
+
+function getLoginShellCommand(socket) {
+  const { request } = socket;
+
+  const c = cookie.parse(socket.handshake.headers.cookie);
+  const token = validateAuthToken(c.authToken)
+  console.log("Token: %j", token);
+  if ( token === undefined ) {
+    throw new Error("UNAUTHORISED - Authentication Token missing");
+  }
+
+  const user = token.sub;
+  console.log(`Preparing login shell for ${user}`)
   
   return [
-    ['login', '-h', socket.client.conn.remoteAddress.split(':')[3]]
+    ['login', '-h', socket.client.conn.remoteAddress.split(':')[3], '-f', user]
     ,
     user,
   ];
@@ -136,7 +142,13 @@ export default function start(port, sslopts) {
   const io = server(createServer(port, sslopts), { path: '/wetty/socket.io' });
   io.on('connection', socket => {
     console.log(`${new Date()} Connection accepted.`);
-    const [args, user] = getCommand(socket);
+
+    const [args, user] = getLoginShellCommand(socket);
+  
+    // Prepare user
+    ensureUserEnvironment(user);
+
+    // Start terminal session
     console.log(`Issiung command: ${args}`)
     const term = spawn('/usr/bin/env', args, {
       name: 'xterm-256color',
