@@ -4,14 +4,15 @@ date: 2018-05-14T15:34:14+01:00
 position: 7
 ---
 
+Every DFT code has it's own input format. Some more intuitive and convinient than others. But they require similar *types* of input. We will use [Quantum Espresso](https://www.quantum-espresso.org) for this tutorial and walk through the most common input sections step-by-step. Quantum Espresso is a widely used free DFT code that is open-source. The large user community ensures that it is feature rich and reasonably stable. Another very popular DFT code is [VASP](https://www.vasp.at/), which consumes about 40% of the worlds super-computer time! VASP is very stable and relatively easy to use. But it is not free. 
+
 # Input file format
 
 You can find a detailed description of the file format on the [Quantum Espresso webpage](https://www.quantum-espresso.org/Doc/INPUT_PW.html).
 
-
 ## Namelists
 
-There are three **mandatory** `NAMELIST`s:
+The input file is sectioned into `NAMELIST`s. There are three **mandatory** `NAMELIST`s:
 
 - `&CONTROL` contains input variables that control the type of calculation performed and the amount of I/O
 - `&SYSTEM` contains input variables that specify the system. Most notably the Bravais lattice
