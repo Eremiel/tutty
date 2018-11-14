@@ -10,41 +10,41 @@
  * Logging/debug routines
  */
 
-var _log_level = 'warn';
+let _log_level = 'warn';
 
-var Debug = function (msg) {};
-var Info = function (msg) {};
-var Warn = function (msg) {};
-var Error = function (msg) {};
+let Debug = function (msg) {};
+let Info = function (msg) {};
+let Warn = function (msg) {};
+let Error = function (msg) {};
 
-export function init_logging (level) {
-    if (typeof level === 'undefined') {
-        level = _log_level;
-    } else {
-        _log_level = level;
+export function init_logging(level) {
+  if (typeof level === 'undefined') {
+    level = _log_level;
+  } else {
+    _log_level = level;
+  }
+
+  Debug = Info = Warn = Error = function (msg) {};
+  if (typeof window.console !== 'undefined') {
+    switch (level) {
+      case 'debug':
+        Debug = console.debug.bind(window.console);
+      case 'info':
+        Info = console.info.bind(window.console);
+      case 'warn':
+        Warn = console.warn.bind(window.console);
+      case 'error':
+        Error = console.error.bind(window.console);
+      case 'none':
+        break;
+      default:
+        throw new Error(`invalid logging type '${level}'`);
     }
-
-    Debug = Info = Warn = Error = function (msg) {};
-    if (typeof window.console !== "undefined") {
-        switch (level) {
-            case 'debug':
-                Debug = console.debug.bind(window.console);
-            case 'info':
-                Info  = console.info.bind(window.console);
-            case 'warn':
-                Warn  = console.warn.bind(window.console);
-            case 'error':
-                Error = console.error.bind(window.console);
-            case 'none':
-                break;
-            default:
-                throw new Error("invalid logging type '" + level + "'");
-        }
-    }
-};
-export function get_logging () {
-    return _log_level;
-};
+  }
+}
+export function get_logging() {
+  return _log_level;
+}
 export { Debug, Info, Warn, Error };
 
 // Initialize logging level

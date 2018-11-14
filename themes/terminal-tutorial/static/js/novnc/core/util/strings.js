@@ -9,7 +9,6 @@
 /*
  * Decode from UTF-8
  */
-export function decodeUTF8 (utf8string) {
-    "use strict";
-    return decodeURIComponent(escape(utf8string));
-};
+export function decodeUTF8(utf8string) {
+  return decodeURIComponent(escape(utf8string));
+}

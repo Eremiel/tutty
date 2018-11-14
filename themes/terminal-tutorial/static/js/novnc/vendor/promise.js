@@ -21,13 +21,12 @@
  */
 
 (function (root) {
-
   // Store setTimeout reference so promise-polyfill will be unaffected by
   // other code modifying setTimeout (like sinon.useFakeTimers())
-  var setTimeoutFunc = setTimeout;
+  const setTimeoutFunc = setTimeout;
 
   function noop() {}
-  
+
   // Polyfill for Function.prototype.bind
   function bind(fn, thisArg) {
     return function () {
@@ -55,13 +54,13 @@
       return;
     }
     self._handled = true;
-    Promise._immediateFn(function () {
-      var cb = self._state === 1 ? deferred.onFulfilled : deferred.onRejected;
+    Promise._immediateFn(() => {
+      const cb = self._state === 1 ? deferred.onFulfilled : deferred.onRejected;
       if (cb === null) {
         (self._state === 1 ? resolve : reject)(deferred.promise, self._value);
         return;
       }
-      var ret;
+      let ret;
       try {
         ret = cb(self._value);
       } catch (e) {
@@ -77,7 +76,7 @@
       // Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
       if (newValue === self) throw new TypeError('A promise cannot be resolved with itself.');
       if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
-        var then = newValue.then;
+        const then = newValue.then;
         if (newValue instanceof Promise) {
           self._state = 3;
           self._value = newValue;
@@ -104,14 +103,14 @@
 
   function finale(self) {
     if (self._state === 2 && self._deferreds.length === 0) {
-      Promise._immediateFn(function() {
+      Promise._immediateFn(() => {
         if (!self._handled) {
           Promise._unhandledRejectionFn(self._value);
         }
       });
     }
 
-    for (var i = 0, len = self._deferreds.length; i < len; i++) {
+    for (let i = 0, len = self._deferreds.length; i < len; i++) {
       handle(self, self._deferreds[i]);
     }
     self._deferreds = null;
@@ -130,13 +129,13 @@
    * Makes no guarantees about asynchrony.
    */
   function doResolve(fn, self) {
-    var done = false;
+    let done = false;
     try {
-      fn(function (value) {
+      fn(value => {
         if (done) return;
         done = true;
         resolve(self, value);
-      }, function (reason) {
+      }, reason => {
         if (done) return;
         done = true;
         reject(self, reason);
@@ -148,30 +147,30 @@
     }
   }
 
-  Promise.prototype['catch'] = function (onRejected) {
+  Promise.prototype.catch = function (onRejected) {
     return this.then(null, onRejected);
   };
 
   Promise.prototype.then = function (onFulfilled, onRejected) {
-    var prom = new (this.constructor)(noop);
+    const prom = new (this.constructor)(noop);
 
     handle(this, new Handler(onFulfilled, onRejected, prom));
     return prom;
   };
 
   Promise.all = function (arr) {
-    var args = Array.prototype.slice.call(arr);
+    const args = Array.prototype.slice.call(arr);
 
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       if (args.length === 0) return resolve([]);
-      var remaining = args.length;
+      let remaining = args.length;
 
       function res(i, val) {
         try {
           if (val && (typeof val === 'object' || typeof val === 'function')) {
-            var then = val.then;
+            const then = val.then;
             if (typeof then === 'function') {
-              then.call(val, function (val) {
+              then.call(val, val => {
                 res(i, val);
               }, reject);
               return;
@@ -186,7 +185,7 @@
         }
       }
 
-      for (var i = 0; i < args.length; i++) {
+      for (let i = 0; i < args.length; i++) {
         res(i, args[i]);
       }
     });
@@ -197,20 +196,20 @@
       return value;
     }
 
-    return new Promise(function (resolve) {
+    return new Promise(resolve => {
       resolve(value);
     });
   };
 
   Promise.reject = function (value) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       reject(value);
     });
   };
 
   Promise.race = function (values) {
-    return new Promise(function (resolve, reject) {
-      for (var i = 0, len = values.length; i < len; i++) {
+    return new Promise((resolve, reject) => {
+      for (let i = 0, len = values.length; i < len; i++) {
         values[i].then(resolve, reject);
       }
     });
@@ -245,11 +244,10 @@
   Promise._setUnhandledRejectionFn = function _setUnhandledRejectionFn(fn) {
     Promise._unhandledRejectionFn = fn;
   };
-  
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Promise;
   } else if (!root.Promise) {
     root.Promise = Promise;
   }
-
-})(this);
+}(this));
