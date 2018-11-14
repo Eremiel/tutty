@@ -27,3 +27,51 @@ There are three *mandatory* `CARD`s:
 - `ATOMIC_SPECIES` contains information about the atoms. At the moment, this is only Cu. You will see the symbol for copper, it's atomic mass, and a filename describing the core electrons. More on this later.
 - `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. Note that we have only one atom specified although the FCC unit cell contains four atoms. We have already told the code that we have an FCC lattice (`ibrav=2` under `@SYSTEM`), and all atoms in an FCC unit cell are related by symmetry. So you only need to specify the unique atoms per unit cell.
 - `K_POINTS` defines the number of points and weights used for the first [Brillouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). Parts of the calculations are performed in reciprocal space, and the the `K_POINTS` card defines the accuracy (and cost) of these.
+
+## Control namelist
+
+The first line in the `CONTROL` namelist defines the type of calculation. Every DFT code can perform various kinds of calculations. This usually includes as a minimum:
+
+- Solving the Kohn-Sham equations self-consistently (i.e., iteratively)
+- *Ab-Initio* molecular dynamics
+- Relaxation of atomic coordinates and geometric optimisation to minimise forces
+
+Here we request a `scf` calculation, which stands for **S**elf **C**onsistent **F**ield calculation. We ask the code to solve the electronic degrees of freedom, but not move the atoms. Other options include `relax`, `md`, and `bands` for band structure calculations.
+
+The next lines in the `CONTROL` namelist define some directories the code will look in for additional information and data and a prefix for output filenames.
+
+Finally, some boolean flags control the computation of some quantities. In this case, using `tstress = .true.` is a bit wasteful, because the stress tensor is mostly needed to compute forces and move atoms and lattice vectors, which we ask the code **not** to do.
+
+## System namelist
+
+### Crystal geometry 
+
+The `SYSTEM` namelist is used to describe the geometry, which consists of
+
+- defining the lattice
+- cystral symmetry
+- (irreducible) atomic coordinates and the atom types occupying these coordinates
+
+Here we define a [face-centred cubic](https://en.wikipedia.org/wiki/Cubic_crystal_system) crystal system with `ibrav = 2`. Because of the high symmetry of the fcc system, we only need to define one lattice parameter with `celldm(1) = 6.73`, which sets the edges of the cube to 6.73 Bohr.
+
+> A Bohr is the unit length in the atomistic unit system. 1 Bohr equals 0.529 Angstrom or 0.0529 nm.
+
+The unit cell contains **one** irreducible coordinate (`nat = 1`), which is occupied by the first species (`ntype = 1`). Which element this represents is defined later.
+
+### Basisset
+
+Quantum espresso is a *plane-wave* code, which means that the wave function is exanded in plane-waves (i.e., complex-valued sin and cos). A plane-wave
+
+$$ \psi({\bf r}) = \exp\left(i {\bf k}\cdot{\bf r}\right) $$
+
+characterised by quantum number ${\bf k}$ has a kinetic energy of
+
+$$ \langle \psi | \nabla^2 |\psi\rangle = \frac{1}{2}{\bf k}^2 $$
+
+The bassis set is truncated by dropping plane-waves with an energy larger than the cut-off energy of 25 Ry (`ecutwf = 25.0`).
+
+> Rydberg is the unit for energy in atomic units. A Ry equals 13.6 eV.
+
+Computation of the charge density is also supported by a plane-wave basis with substantially higher energy cutoff (`ecutrho = 300`). 
+
+In general, energy cut-offs need to be tested for convergence, but there are [guidelines](https://www.quantum-espresso.org/Doc/INPUT_PW.html#idm45922794555488) for sensible starting points.
