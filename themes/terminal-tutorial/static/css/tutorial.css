@@ -130,3 +130,7 @@ html {
 #guidance-group > div.current{
     display: block;
 }
+
+div.highlight code {
+  color: white;
+}
