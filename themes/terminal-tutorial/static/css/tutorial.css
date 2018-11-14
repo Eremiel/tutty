@@ -72,6 +72,8 @@
 .workarea {
   background: white;
   grid-area: workarea;
+  padding-left: 0.75em;
+  background-color: black;
 }
 
 .overview {
