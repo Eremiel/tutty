@@ -25,7 +25,11 @@ The input file is sectioned into `NAMELIST`s. There are three **mandatory** `NAM
 There are three *mandatory* `CARD`s:
 
 - `ATOMIC_SPECIES` contains information about the atoms. At the moment, this is only Cu. You will see the symbol for copper, it's atomic mass, and a filename describing the core electrons. More on this later.
+<<<<<<< HEAD
+- `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. So you only need to specify the unique atoms per unit cell.
+=======
 - `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. 
+>>>>>>> 65be82cbdb25d91461b2a818a4e41a3cfa1ab5db
 - `K_POINTS` defines the number of points and weights used for the first [Brillouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). Parts of the calculations are performed in reciprocal space, and the the `K_POINTS` card defines the accuracy (and cost) of these.
 
 ## Control namelist
@@ -76,6 +80,18 @@ Computation of the charge density is also supported by a plane-wave basis with s
 
 In general, energy cut-offs need to be tested for convergence, but there are [guidelines](https://www.quantum-espresso.org/Doc/INPUT_PW.html#idm45922794555488) for sensible starting points.
 
+<<<<<<< HEAD
+## Electrons namelist
+
+## Atomic species
+
+## Atomic positions
+
+Note that we have only one atom specified although the FCC unit cell contains four atoms. We have already told the code that we have an FCC lattice (`ibrav=2` under `@SYSTEM`), and all atoms in an FCC unit cell are related by symmetry.
+
+## K-point mesh
+
+=======
 
 ### Smearing
 
@@ -139,3 +155,4 @@ with $ u_{\rm n}({\bf r}) $ being a function with the same periodicity as the la
 The atomic quantum numbers $|n,l,m\rangle$ enumerating atomic orbitals in molecules transpose into a set of band indices $\rm n$ and a continuum of reciprocal space ${\bf k}$ vectors called crystal momentum. While the band indices are discrete numbers, crystal momentum is not. Every quantity that sums over states, therefore, has to integrate over $\bf k$-space in the first [Billouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). This is usually done numerically on a grid in reciprocal space and the `KPOINTS` card defines this grid. In this case, we ask for a regular grid that has dimensions 8x8x8 centered at the origin.
 
 > Checking k-mesh convergence is always one of the first convergence tests that needs to be done in a new project. Insulators and semi-conductors usually require a less dense grid than metals.
+>>>>>>> 65be82cbdb25d91461b2a818a4e41a3cfa1ab5db

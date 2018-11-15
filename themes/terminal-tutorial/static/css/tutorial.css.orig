@@ -135,10 +135,11 @@ div.highlight code {
   color: white;
 }
 
-article figure {
-  text-align: center;
-}
-
+<<<<<<< HEAD
 h2 {
   border-bottom: solid 1px #aaa;
+=======
+article figure {
+  text-align: center;
+>>>>>>> 65be82cbdb25d91461b2a818a4e41a3cfa1ab5db
 }
