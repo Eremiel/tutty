@@ -75,3 +75,36 @@ The bassis set is truncated by dropping plane-waves with an energy larger than t
 Computation of the charge density is also supported by a plane-wave basis with substantially higher energy cutoff (`ecutrho = 300`). 
 
 In general, energy cut-offs need to be tested for convergence, but there are [guidelines](https://www.quantum-espresso.org/Doc/INPUT_PW.html#idm45922794555488) for sensible starting points.
+
+
+### Smearing
+
+Standard DFT formally operates at zero Kelvin. This means that there is a sharp front between occupied and unoccupied electronic states. This can lead to significant variation of the charge density during the self-consistency loop and numerical instability, especially for metallic systems. A common scheme is to **smear** out occupation across the Fermi level (i.e., most energetic occupied state) to achieve a smoother response of the charge density. This is similar to increasing the temperature (for the electrons only). Because smearing is only a numerical tool to achieve better convergence, the results need to be extrapolated back to zero temperature, which usually can be done with suffiecient accuracy for practical applications.
+
+The input file request a Gaussian smearing (`smearing='gaussian'`) and the `degauss=0.02` parameter sets the width of the Gaussian smearing operator.
+
+## Electrons namelist
+
+The `ELECTRONS` namelist controls the iterative solution of the Kohn-Sham equations. Density-Functional-Theory is a mean-field theory were electrons do not directly interact with each other. Rather, the interaction is mitigated through the collective charge density. Although this avoids the complexity of the many-body problem, it leads to non-linear eigenvalue problems that require iterative solution:
+
+$$ \hat {\rm H}(\rho(\psi))\cdot\psi = \epsilon \psi $$
+
+where $ \hat {\rm H} $ is the DFT Hamiltonian (or energy) operator, which depends on the charge density $\rho$, which in turn is a functional of the wavefunction $\rho({\bf r}) = \langle\psi|{\bf r}|\psi\rangle$. 
+
+There are usually a number of numerical algorithms available to diagonalise (i.e., solve) the DFT eigenvalue problem. The input file specifies the Davidson scheme (`optimisation='david'`). Metals are particularly prone to *charge sloshing* where the charge density oscilates between iterations, because of the many bands crossing the Fermi level. The `mixing_beta=0.7` parameter requests 70% of the old charge density with 30% of the new charge density in each iteration. This "damping" slows convergence down but increases numercial stability, which is a very common characteristic of iterative solvers in general.  
+
+### Cards
+
+The `ATOMIC_SPECIES` card specifies potentials for all elements. Most DFT codes do not explicitly consider the core electrons, because they do not participate in chemical interactions. Rather they define atomic potentials that combine the effect of the positive nucleus and the core electrons on the valence electrons. Such an approach has two advantages:
+
+- It requires less electrons to be considered explicitly reducing the size of the Hamiltonian and speeding up calculations
+- It allows to use a much lower energy cut-off in plane-wave codes because the spatially narrow and highly featured core region around a nucleus is not treated explicitly. This is shown in the figure below where the screened effective core potential approaches a finite value at the core, which leads to a smoother wavefunction in that region. Core potentials are constructed to guarantee that they reproduce the exact wave-function outside the core region $r_c$.
+
+![Pseudopotential](/img/pseudopotentials.png)
+
+Constructing effective potentials is a bit of a black art and you should not generally come into a situation where you need to construct one yourself. 
+
+> DFT codes provide a library of potentials. The potentials for Quantum Espresso can be downloaded from their [library](https://www.quantum-espresso.org/pseudopotentials). 
+
+You will often find more than one potential available for each element. It is very important to be consistent in the choice of potentials. **Effective core potentials need to be mutually compatible and remain unchanged across a set of calculations (e.g., needed to compute a formation energy).**
+
