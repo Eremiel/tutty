@@ -134,3 +134,7 @@ html {
 div.highlight code {
   color: white;
 }
+
+article figure {
+  text-align: center;
+}

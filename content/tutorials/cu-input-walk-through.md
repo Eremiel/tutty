@@ -25,7 +25,7 @@ The input file is sectioned into `NAMELIST`s. There are three **mandatory** `NAM
 There are three *mandatory* `CARD`s:
 
 - `ATOMIC_SPECIES` contains information about the atoms. At the moment, this is only Cu. You will see the symbol for copper, it's atomic mass, and a filename describing the core electrons. More on this later.
-- `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. Note that we have only one atom specified although the FCC unit cell contains four atoms. We have already told the code that we have an FCC lattice (`ibrav=2` under `@SYSTEM`), and all atoms in an FCC unit cell are related by symmetry. So you only need to specify the unique atoms per unit cell.
+- `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. 
 - `K_POINTS` defines the number of points and weights used for the first [Brillouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). Parts of the calculations are performed in reciprocal space, and the the `K_POINTS` card defines the accuracy (and cost) of these.
 
 ## Control namelist
@@ -95,16 +95,47 @@ There are usually a number of numerical algorithms available to diagonalise (i.e
 
 ### Cards
 
+#### Effective core potentials
+
 The `ATOMIC_SPECIES` card specifies potentials for all elements. Most DFT codes do not explicitly consider the core electrons, because they do not participate in chemical interactions. Rather they define atomic potentials that combine the effect of the positive nucleus and the core electrons on the valence electrons. Such an approach has two advantages:
 
 - It requires less electrons to be considered explicitly reducing the size of the Hamiltonian and speeding up calculations
 - It allows to use a much lower energy cut-off in plane-wave codes because the spatially narrow and highly featured core region around a nucleus is not treated explicitly. This is shown in the figure below where the screened effective core potential approaches a finite value at the core, which leads to a smoother wavefunction in that region. Core potentials are constructed to guarantee that they reproduce the exact wave-function outside the core region $r_c$.
 
-![Pseudopotential](/img/pseudopotentials.png)
+{{% figure src="/img/pseudopotentials.png" caption="Pseudopotentials with smooth core region" %}}
 
 Constructing effective potentials is a bit of a black art and you should not generally come into a situation where you need to construct one yourself. 
 
-> DFT codes provide a library of potentials. The potentials for Quantum Espresso can be downloaded from their [library](https://www.quantum-espresso.org/pseudopotentials). 
+> DFT codes provide libraries of potentials that are specific to the code. The potentials for Quantum Espresso can be downloaded from their [library](https://www.quantum-espresso.org/pseudopotentials). 
 
 You will often find more than one potential available for each element. It is very important to be consistent in the choice of potentials. **Effective core potentials need to be mutually compatible and remain unchanged across a set of calculations (e.g., needed to compute a formation energy).**
 
+#### Atomic coordinates
+
+The `ATOMIC_POSITIONS` card defines the atomic coordinates. Note that we have only one `Cu` atom specified at the origin although the FCC unit cell contains four atoms. We have already told the code that we have an FCC lattice (`ibrav=2` under `@SYSTEM`), and all atoms in an FCC unit cell are related by symmetry. So you only need to specify the unique atoms per unit cell. If symmetry is considered depends on the code. Vasp, for instance, requires to explicitly list all atoms in the unit cell. 
+
+<script type='text/javascript' src='https://www.x3dom.org/download/x3dom.js'> </script>
+<figure>
+<X3D  id="boxes" showStat="false" showLog="false" x="0px" y="0px" width="500px" height="500px">
+	<Scene>
+		<inline url="/img/cu_fcc.x3d"></inline>
+	</Scene>
+</X3D>
+<figcaption>Face-centered-cubic (FCC) crystal structure of Copper; (blue) crystallographically unique sites, (green) symmetry equivalent sites.</figcaption>
+</figure>
+
+#### Reciprocal space
+
+Periodicity in crystaline materials means that wave functions have to obey the form
+
+$$ 
+\psi\_{{\rm n},{\bf k}}({\bf r}) = \exp(i{\bf k}\cdot{\bf r})\cdot u\_{\rm n}({\bf r}) 
+$$
+
+with $ u_{\rm n}({\bf r}) $ being a function with the same periodicity as the lattice. 
+
+{{% figure src="/img/band_formation.png" caption="Illustration of the formation of continuous bands from atomic orbitals" %}}
+
+The atomic quantum numbers $|n,l,m\rangle$ enumerating atomic orbitals in molecules transpose into a set of band indices $\rm n$ and a continuum of reciprocal space ${\bf k}$ vectors called crystal momentum. While the band indices are discrete numbers, crystal momentum is not. Every quantity that sums over states, therefore, has to integrate over $\bf k$-space in the first [Billouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). This is usually done numerically on a grid in reciprocal space and the `KPOINTS` card defines this grid. In this case, we ask for a regular grid that has dimensions 8x8x8 centered at the origin.
+
+> Checking k-mesh convergence is always one of the first convergence tests that needs to be done in a new project. Insulators and semi-conductors usually require a less dense grid than metals.
