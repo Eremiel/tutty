@@ -114,13 +114,8 @@ You will often find more than one potential available for each element. It is ve
 
 The `ATOMIC_POSITIONS` card defines the atomic coordinates. Note that we have only one `Cu` atom specified at the origin although the FCC unit cell contains four atoms. We have already told the code that we have an FCC lattice (`ibrav=2` under `@SYSTEM`), and all atoms in an FCC unit cell are related by symmetry. So you only need to specify the unique atoms per unit cell. If symmetry is considered depends on the code. Vasp, for instance, requires to explicitly list all atoms in the unit cell. 
 
-<script type='text/javascript' src='https://www.x3dom.org/download/x3dom.js'> </script>
 <figure>
-<X3D  id="boxes" showStat="false" showLog="false" x="0px" y="0px" width="500px" height="500px">
-	<Scene>
-		<inline url="/img/cu_fcc.x3d"></inline>
-	</Scene>
-</X3D>
+{{< fcc-x3d >}} 
 <figcaption>Face-centered-cubic (FCC) crystal structure of Copper; (blue) crystallographically unique sites, (green) symmetry equivalent sites.</figcaption>
 </figure>
 

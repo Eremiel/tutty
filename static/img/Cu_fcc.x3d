@@ -269,6 +269,8 @@
 		           rotation="0.000000 -0.000000 0.000000 0.000000"
 		           >
 		</Transform>
+		<Switch whichChoice="0" id="sym_eq_atoms">
+		<Group>
 		<Transform DEF="atom0_IndexedFaceSet_013_TRANSFORM"
 		           translation="0.000000 0.000000 1.807480"
 		           scale="0.512000 0.512000 0.512000"
@@ -368,6 +370,8 @@
 				<Group USE="group_ME_atom0_IndexedFaceSet" />
 			</Transform>
 		</Transform>
+		</Group>
+		</Switch>
 		<Transform DEF="atom0_IndexedFaceSet_007_TRANSFORM"
 		           translation="1.807480 1.807480 1.807480"
 		           scale="0.512000 0.512000 0.512000"

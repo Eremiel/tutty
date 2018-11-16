@@ -1,0 +1,30 @@
+<script type='text/javascript' src='https://www.x3dom.org/download/x3dom.js'></script>
+<script type='text/javascript'>
+	$(function() {
+		$('#sym_eq_atoms_toggle').click(function() {
+			if ( $('#fcc__sym_eq_atoms').attr("whichChoice") != 0 ) {
+				$('#fcc__sym_eq_atoms').attr("whichChoice","0");
+			} else {
+				$('#fcc__sym_eq_atoms').attr("whichChoice","-1");
+			}
+			console.log("toggle symmetry equivalent atoms" + $('#fcc__sym_eq_atoms').attr("whichChoice"));
+		});
+	})
+</script>
+
+<div style="display: flex; justify-content:center; flex-flow: row wrap;">
+	<div>
+		<X3D id="boxes" showStat="false" showLog="false" x="0px" y="0px" width="500px" height="500px">
+			<Scene>
+				<inline url="/img/cu_fcc.x3d" nameSpaceName="fcc" mapDEFToID="true"></inline>
+			</Scene>
+		</X3D>
+	</div>
+	<div style="display: flex row; margin-top:2em; margin-left: 1em;">
+		<label class="switch">
+			<input type="checkbox" checked id="sym_eq_atoms_toggle">
+			<span class="slider round"></span>
+		</label>
+		<div>Symmetry operations</div>
+	</div>
+</div>
