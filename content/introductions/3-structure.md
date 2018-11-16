@@ -9,9 +9,7 @@ This web site will guide you through the entire lab. You will only need a web br
 
 ![Tutorial screen](/page-layout.svg)
 
-
-The tutorial page features three areas.
+The tutorial page features two areas.
 
 - On the left, you will find guidance to complete the various tasks
-- At the bottom is an area that provides an overview of where you are in the tutorial
 - On the right is the work area. This is where you will perform the tasks given in the guidance

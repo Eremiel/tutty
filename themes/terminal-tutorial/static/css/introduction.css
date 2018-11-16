@@ -1,0 +1,21 @@
+/* Button styles */
+.btn {
+  -webkit-border-radius: 5;
+  -moz-border-radius: 5;
+  border-radius: 5px;
+  font-family: 'Lato', sans-serif;
+  color: #ffffff;
+  font-size: 20px;
+  background: #c3c6c9;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #3cb0fd;
+  text-decoration: none;
+}
+
+.navigation {
+  text-align: center;
+}

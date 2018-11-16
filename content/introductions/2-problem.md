@@ -14,7 +14,7 @@ They provide experimental evidence for Cu formation upon reduction with initial 
 The question we ask is what is the thermodynamic equilibrium potential for full reduction of $ {\rm Cu}_3{\rm N} $ to $ {\rm Cu} $. Specifically, we are interested in the thermodynamics of the reaction
 
 $$
-{\rm Cu}_3{\rm N} + 3 {\rm Na} + 3 e^- \leftrightarrow {\rm Na}_3{\rm N} + 3{\rm Cu}
+{\rm Cu}_3{\rm N} + 3 {\rm Na}^+ + 3 e^- \rightleftharpoons {\rm Na}_3{\rm N} + 3{\rm Cu}
 $$
 
 To achieve this, we will have to:
@@ -22,4 +22,4 @@ To achieve this, we will have to:
 1. Compute the formation energy of the involved compounds, and
 2. Relate this to the thermochemistry of dissolved species to account for $ {\rm Na}^+ $
 
-To complete the first part, we will employ Density-Functional-Theory. For the second part, we will draw on classical thermodynamics to relate our computed results to electrochemical environments. This is a very common 'trick', because it is very costly to investigate aqueous phases where the solvent degrees of freedom contribute substantially to Gibb's free energy.
+To complete the first part, we will employ Density-Functional-Theory. For the second part, we will draw on classical thermodynamics to relate our computed results to electrochemical environments. This is a very common *trick*, because it is very costly to investigate dissolved phases where the solvent degrees of freedom contribute substantially to Gibb's free energy.
