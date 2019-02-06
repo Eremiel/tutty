@@ -4,8 +4,8 @@ FROM alpine:3.8 as qe-builder
 RUN apk add --update gfortran make git tar
 RUN git clone https://gitlab.com/QEF/q-e.git
 WORKDIR /q-e
-RUN ./configure LDFLAGS="-static-libgfortran -static-libgcc -Bstatic"
-RUN make all
+#RUN ./configure LDFLAGS="-static-libgfortran -static-libgcc -Bstatic"
+#RUN make all
 
 
 FROM node:8-alpine
@@ -19,5 +19,8 @@ COPY terminal/motd /etc/motd
 EXPOSE 3000
 
 WORKDIR /app
+
+# Create a custom group for tutorial users
+RUN addgroup --gid 2000 tutorial
 
 CMD yarn --dev && hugo && node bin

@@ -26,6 +26,11 @@ services:
       - ./public:/target
     ports:
       - "1313:1313"
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
 volumes:
   public:
 

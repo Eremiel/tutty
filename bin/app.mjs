@@ -16,6 +16,15 @@ var cookie = require('cookie')
 var config = require('./config.json');
 
 /****************************************************************************************
+ * Redis key-value store 
+ ****************************************************************************************/
+
+ // TODO make IP/Port configurable
+
+var redis = require('redis');
+var redis_client = redis.createClient(6379, "redis"); // this creates a new client
+
+/****************************************************************************************
  * Express routes 
  ****************************************************************************************/
 
@@ -104,10 +113,43 @@ function ensureUserEnvironment(username) {
 
   // TODO Need to find way to ensure same UID and GID across instances to share home directories
   //      Current idea: use a redis instance to manage UIDs and GIDs
-  exec(`id -u ${username} &>/dev/null || adduser -s /bin/bash -h /home/${username} -D ${username}`, (err, stdout, stderr) => {
-    if (err) {
-      throw new Error(err);
-    }
+  getUserId(username)
+    .then((uid) => {
+      // Previously seen user. Create environment and reassign uid
+      exec(`id -u ${username} &>/dev/null || adduser -s /bin/bash -h /home/${username} -G tutorial -D ${username} -u ${uid}`, (err, stdout, stderr) => {
+        if (err) {
+          throw new Error(err);
+        }
+      });
+    })
+    .catch((error) => {
+      // New user. Create environment and store uid for future use
+      exec(`id -u ${username} &>/dev/null || adduser -s /bin/bash -h /home/${username} -G tutorial -D ${username} &>/dev/null && id -u ${username}`, (err, stdout, stderr) => {
+        if (err) {
+          throw new Error(err);
+        } else {
+          redis_client.set(username, stdout);
+          console.log(`New user ${username} assigned UID ${stdout}`);
+        }
+      });
+    });
+}
+
+function getUserId(username) {
+  return new Promise((resolve, reject) => {
+    redis_client.get(username, function (error, result) {
+      if (error) {
+        console.log(`Error accessing redis store.`);
+        reject(error)
+      } else {
+        if (result == null) {
+          console.log(`User ${username} unknown.`);
+          reject("Unknown username");
+        }
+        console.log(`User ${username} known -> UID: ${result}`);
+        resolve(result);
+      }
+    });
   });
 }
 
