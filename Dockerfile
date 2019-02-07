@@ -20,7 +20,7 @@ RUN apt-get update -y && \
 
 COPY terminal/prompt.sh /etc/profile.d/prompt.sh
 COPY terminal/motd /etc/motd
-COPY terminal/bashrc /etc/bash.bashrc
+COPY terminal/bashrc /etc/skel/.bashrc
 
 EXPOSE 3000
 
