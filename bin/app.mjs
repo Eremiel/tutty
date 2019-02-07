@@ -116,22 +116,26 @@ function ensureUserEnvironment(username) {
   getUserId(username)
     .then((uid) => {
       // Previously seen user. Create environment and reassign uid
-      exec(`id -u ${username} &>/dev/null || adduser -s /bin/bash -h /home/${username} -G tutorial -D ${username} -u ${uid}`, (err, stdout, stderr) => {
-        if (err) {
-          throw new Error(err);
-        }
-      });
+      exec(`id -u ${username} &>/dev/null || (useradd --shell /bin/bash --home-dir /home/${username} -m --groups tutorial --uid ${uid} ${username})`, 
+        { shell: "/bin/bash" },
+        (err, stdout, stderr) => {
+          if (err) {
+            throw new Error(err);
+          }
+        });
     })
     .catch((error) => {
       // New user. Create environment and store uid for future use
-      exec(`id -u ${username} &>/dev/null || adduser -s /bin/bash -h /home/${username} -G tutorial -D ${username} &>/dev/null && id -u ${username}`, (err, stdout, stderr) => {
-        if (err) {
-          throw new Error(err);
-        } else {
-          redis_client.set(username, stdout);
-          console.log(`New user ${username} assigned UID ${stdout}`);
-        }
-      });
+      exec(`id -u ${username} &>/dev/null || (useradd --shell /bin/bash --home-dir /home/${username} -m --groups tutorial ${username} &>/dev/null && id -u ${username})`, 
+        { shell: "/bin/bash" },
+        (err, stdout, stderr) => {
+          if (err) {
+            throw new Error(err);
+          } else {
+            redis_client.set(username, stdout.trim());
+            console.log(`New user ${username} assigned UID ${stdout}`);
+          }
+        });
     });
 }
 
@@ -147,7 +151,7 @@ function getUserId(username) {
           reject("Unknown username");
         }
         console.log(`User ${username} known -> UID: ${result}`);
-        resolve(result);
+        resolve(result.trim());
       }
     });
   });
