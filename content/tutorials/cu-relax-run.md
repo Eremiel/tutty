@@ -55,4 +55,6 @@ The cell has somewhat contracted, which suggests that our initial lattice consta
 
 > 1 Bohr = 0.529 A
 
-For convininience, the volume in Angstrom is printed in parenthesis as well. You can compare this with the experimental unit-cell volume for FCC copper, which is 47.24 A^3. The volume seems to be out by a substantial factor?  What is going on here? Quantum Espresso internally uses the *primitive* unit cell, which is rhombohedral with one irreducible atom. The crystalographic unit cell is cubic and has four atoms. It is very important to be aware of the size of the internal unit cell and appropriately normalise when reporting results!
+For convininience, the volume in Angstrom is printed in parenthesis as well. You can compare this with the experimental unit-cell volume for FCC copper, which is 47.24 A^3. The volume seems to be out by a substantial factor!  
+
+What is going on here? Quantum Espresso internally uses the *primitive* unit cell, which is rhombohedral with one irreducible atom. The crystalographic unit cell is cubic and has four atoms. It is very important to be aware of the size of the internal unit cell and appropriately normalise when reporting results!
