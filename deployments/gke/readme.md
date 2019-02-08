@@ -7,10 +7,11 @@ The lab can be easily deployed on GKE. The main issues are:
 
 ## Container image in GKE
 
-GKE provides a private docker registry that can be used to provision images. 
+GKE provides a private docker registry that can be used to provision images.
 
 To compile and push the container use:
-```
+
+```bash
 docker build -t fi-dft-lab -f Dockerfile.deploy .
 docker tag fi-dft-lab:latest eu.gcr.io/fi-dft-lab/web:latest
 docker push eu.gcr.io/fi-dft-lab/web:latest
@@ -18,13 +19,13 @@ docker push eu.gcr.io/fi-dft-lab/web:latest
 
 This assumes that Docker has been configured for usage with `gcloud`. To configure docker with the Google Cloud credentials use:
 
-```
+```bash
 gcloud container clusters get-credentials fi-dft-cluster --zone europe-west2-a
 ```
 
 ## Storage
 
-The application requires two types of storage: 
+The application requires two types of storage:
 
 1) Redis Database storage - ReadWriteOnce (small)
 2) Home directory files storage - ReadWriteMany (not too small)
@@ -39,7 +40,7 @@ To deploy the storage solution:
 - Then create the *Redis* deployment
 - Finally create the *Web* deployment after updating the nfs IP in `web.yaml`
 
-```
+```bash
 kubectl apply -f nfs.yaml
 kubectl apply -f redis.yaml
 kubeclt apply -f web.yaml
