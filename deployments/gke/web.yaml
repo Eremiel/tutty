@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - web
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - env:
+        - name: AUTH_REQUEST_REDIRECT_URI
+          value: http://dft-lab.kramergroup.science
+        - name: AUTH_REQUEST_ID
+          value: 31750f49c73255d846df
+        - name: AUTH_REQUEST_SECRET
+          value: 1f2a00c4ef7fe7e923ed60fbaa6b45ca822f20ed
+        image: eu.gcr.io/fi-dft-lab/web:latest
+        name: web
+        volumeMounts:
+        - mountPath: /home
+          name: nfs-volume
+      volumes:
+      - name: nfs-volume
+        nfs:
+          path: /
+          server: 10.39.254.191 # CHANGE ME !!!!
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+  name: web
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: web
+  type: LoadBalancer
