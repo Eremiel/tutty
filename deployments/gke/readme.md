@@ -29,7 +29,7 @@ The application requires two types of storage:
 1) Redis Database storage - ReadWriteOnce (small)
 2) Home directory files storage - ReadWriteMany (not too small)
 
-The Redis persistent storage can be easily realised using standard persitentVolumeClaims. Persistence of the home folder is more complicated, because it has to allow access from multiple pods for scalability. Google Cloud provides *Google FileStore* for NFS shares, but this is very expensive (> $200 per month for 1TB - minimum). A dedicated nfs server underpinned by a persistentVolumeClaim with ReadWriteOnce mode is a low-cost simple alternative for small-scale application. This approach has been taken here. This [blog] has a good step-by-step guide for setting this up.
+The Redis persistent storage can be easily realised using standard persitentVolumeClaims. Persistence of the home folder is more complicated, because it has to allow access from multiple pods for scalability. Google Cloud provides *Google FileStore* for NFS shares, but this is very expensive (> $200 per month for 1TB - minimum). A dedicated nfs server underpinned by a persistentVolumeClaim with ReadWriteOnce mode is a low-cost simple alternative for small-scale application. This approach has been taken here. This [blog](https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-volumes-example-nfs-persistent-volume.html) has a good step-by-step guide for setting this up.
 
 ### Deployment
 
