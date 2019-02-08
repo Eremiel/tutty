@@ -9,7 +9,7 @@ position: 8
 OK. We are ready to do our first serious calculation:
 
 ```bash
-pw.x cu.scf.in | tee cu.scf.out
+pw.x < cu.scf.in | tee cu.scf.out
 ```
 
 The first part of that command runs Quantum Espresso and feeds it the `cu.scf.in` input file. The second part deals with the output. `tee` is a little helper program that copies all output into a file. The `|` symbol is called a pipe and connects the output from `pw.x` to `tee`.

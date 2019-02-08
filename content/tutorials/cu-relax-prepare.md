@@ -31,7 +31,7 @@ This will instruct the code to relax the atomic positions and the unit cell (the
   ion_dynamics = 'bfgs'
 /
 &cell
-  ion_dynamics = 'bfgs'  
+  cell_dynamics = 'bfgs'  
 /
 ```
 
