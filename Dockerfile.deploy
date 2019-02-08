@@ -1,15 +1,49 @@
-FROM node:8-alpine as builder
-WORKDIR /usr/src/app
-RUN apk add --update build-base python
-COPY . /usr/src/app
+# --- build Quantum Espresso ---
+FROM debian:jessie as qe-builder
+
+RUN apt-get -y update && \
+    apt-get install -y gfortran make git tar bash && \
+    rm -rf /var/lib/apt/lists/* 
+
+RUN git clone https://gitlab.com/QEF/q-e.git
+WORKDIR /q-e
+RUN ./configure LDFLAGS="-static-libgfortran -static-libgcc -Bstatic"
+RUN make all
+
+# --- build Hugo ---
+FROM klakegg/hugo:0.53-onbuild AS hugo
+
+
+# --- runtime container ---
+FROM node:8.15.0-jessie
+MAINTAINER d.kramer@soton.ac.uk
+
+RUN apt-get update -y && \
+    apt-get install -y python bash git nano vim && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create a custom group for tutorial users
+RUN addgroup --gid 2000 tutorial
+
+# Copy quantum espresso
+COPY --from=qe-builder /q-e/bin/* /opt/q-e/
+RUN for f in $(ls /opt/q-e); do ln -s /opt/q-e/$f /usr/bin; done
+
+# Shell 
+COPY terminal/prompt.sh /etc/profile.d/prompt.sh
+COPY terminal/motd /etc/motd
+COPY terminal/bashrc /etc/skel/.bashrc
+
+EXPOSE 3000
+
+WORKDIR /app
+
+# Server-side application
+COPY bin /app/bin
+COPY package.json /app
 RUN yarn
 
-FROM node:8-alpine
-MAINTAINER butlerx@notthe.cloud
-WORKDIR /app
-RUN adduser -D -h /home/term -s /bin/sh term && \
-    ( echo "term:term" | chpasswd ) && \
-	apk add openssh-client
-EXPOSE 3000
-COPY --from=builder /usr/src/app /app
-CMD node bin 
+# Copy static webpage
+COPY --from=hugo /onbuild /app/public
+
+CMD node bin

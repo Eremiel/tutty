@@ -14,9 +14,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      PORT: 3000
-      SSHHOST: 'localhost'
-      SSHPORT: 22
+      - AUTH_REQUEST_REDIRECT_URI=http://dft-lab.kramergroup.science
+      - AUTH_REQUEST_ID=31750f49c73255d846df
+      - AUTH_REQUEST_SECRET=1f2a00c4ef7fe7e923ed60fbaa6b45ca822f20ed
   hugo:
     container_name: hugo
     image: klakegg/hugo:latest

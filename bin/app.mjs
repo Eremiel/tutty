@@ -13,7 +13,25 @@ var jwt = require('jsonwebtoken');
 import cookieParser from 'cookie-parser';
 var cookie = require('cookie')
 
+/****************************************************************************************
+ * Process configuration 
+ ****************************************************************************************/
+
 var config = require('./config.json');
+
+// Allow for ENV variable to overwrite the callback uri for Github OAuth2
+if (process.env.AUTH_REQUEST_REDIRECT_URI) {
+  config.AUTH_REQUEST.redirect_uri = process.env.AUTH_REQUEST_REDIRECT_URI;
+}
+
+if (process.env.AUTH_REQUEST_ID) {
+  config.AUTH_REQUEST.client_id = process.env.AUTH_REQUEST_ID;
+}
+
+if (process.env.AUTH_REQUEST_SECRET) {
+  config.AUTH_REQUEST.client_secret = process.env.AUTH_REQUEST_SECRET;
+}
+
 
 /****************************************************************************************
  * Redis key-value store 
@@ -22,7 +40,12 @@ var config = require('./config.json');
  // TODO make IP/Port configurable
 
 var redis = require('redis');
-var redis_client = redis.createClient(6379, "redis"); // this creates a new client
+var redis_client = redis.createClient(config.REDIS_PORT, config.REDIS_URL); // this creates a new client
+var redis_error = false;
+redis_client.on("error", (err) => {
+  console.log("Error " + err);
+  redis_error = true;
+});
 
 /****************************************************************************************
  * Express routes 
@@ -113,6 +136,9 @@ function ensureUserEnvironment(username) {
 
   // TODO Need to find way to ensure same UID and GID across instances to share home directories
   //      Current idea: use a redis instance to manage UIDs and GIDs
+
+  console.log(`Ensuring user exists for login ${username}`)
+
   getUserId(username)
     .then((uid) => {
       // Previously seen user. Create environment and reassign uid
@@ -126,7 +152,7 @@ function ensureUserEnvironment(username) {
     })
     .catch((error) => {
       // New user. Create environment and store uid for future use
-      exec(`id -u ${username} &>/dev/null || (useradd --shell /bin/bash --home-dir /home/${username} -m --groups tutorial ${username} &>/dev/null && id -u ${username})`, 
+      exec(`(id -u ${username} &>/dev/null || useradd --shell /bin/bash --home-dir /home/${username} -m --groups tutorial ${username} &>/dev/null) && id -u ${username}`, 
         { shell: "/bin/bash" },
         (err, stdout, stderr) => {
           if (err) {
@@ -141,6 +167,11 @@ function ensureUserEnvironment(username) {
 
 function getUserId(username) {
   return new Promise((resolve, reject) => {
+    
+    if (redis_error) {
+      return reject("Redis not available");
+    }
+
     redis_client.get(username, function (error, result) {
       if (error) {
         console.log(`Error accessing redis store.`);
