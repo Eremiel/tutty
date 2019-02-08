@@ -30,6 +30,13 @@ WORKDIR /app
 RUN addgroup --gid 2000 tutorial
 
 COPY --from=qe-builder /q-e/bin/* /opt/q-e/
-RUN chgrp -R tutorial /opt/q-e && for f in $(ls /opt/q-e); do ln -s /opt/q-e/$f /usr/bin; done
+RUN for f in $(ls /opt/q-e); do ln -s /opt/q-e/$f /usr/bin; done
+RUN mkdir -p /potentials && \
+    cd /potentials && curl -O https://www.quantum-espresso.org/upf_files/Cu.pbe-dn-kjpaw_psl.0.2.UPF && \
+    cd /potentials && curl -O https://www.quantum-espresso.org/upf_files/Na.pbe-spn-kjpaw_psl.0.2.UPF && \
+    cd /potentials && curl -O https://www.quantum-espresso.org/upf_files/N.pbe-n-kjpaw_psl.0.1.UPF
+ENV PSEUDO_DIR=/potentials
+ENV TMP_DIR=/tmp
+
 
 CMD yarn --dev && node bin
