@@ -10,7 +10,7 @@ When starting with atomistic simulations, one quickly out-grows the capabilities
 
 # The Unix terminal
 
-We will use the **Terminal** for of our work, because DFT codes are text-based. Let's have a look around. The terminal shows the **command prompt**, which shows you the current directory in red followed by a yellow `>` sign. The `~` is a shorthand for **home directory**. You can use
+We will use the **Terminal** for our work, because DFT codes are text-based. Let's have a look around. The terminal shows the **command prompt**, which shows you the current directory in red followed by a yellow `>` sign. The `~` is a shorthand for **home directory**. You can use
 
 ```bash
 pwd

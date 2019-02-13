@@ -37,6 +37,6 @@ RUN mkdir -p /potentials && \
     cd /potentials && curl -O https://www.quantum-espresso.org/upf_files/N.pbe-n-kjpaw_psl.0.1.UPF
 ENV PSEUDO_DIR=/potentials
 ENV TMP_DIR=/tmp
-
+RUN mkdir -p /tmp && chmod a+w /tmp
 
 CMD yarn --dev && node bin

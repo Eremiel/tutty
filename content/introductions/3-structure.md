@@ -5,7 +5,7 @@ type: "introductions"
 position: 3
 ---
 
-This web site will guide you through the entire lab. You will only need a web browser to complete the exercises. After reading through this introduction, we will move on to the tutorial.
+This website will guide you through the entire lab. You will only need a web browser to complete the exercises. After reading through this introduction, we will move on to the tutorial.
 
 ![Tutorial screen](/page-layout.svg)
 

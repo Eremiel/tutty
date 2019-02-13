@@ -36,6 +36,7 @@ RUN mkdir -p /potentials && \
 
 ENV PSEUDO_DIR=/potentials
 ENV TMP_DIR=/tmp
+RUN mkdir -p /tmp && chmod a+w /tmp
 
 # Shell 
 COPY terminal/prompt.sh /etc/profile.d/prompt.sh

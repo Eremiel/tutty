@@ -12,7 +12,15 @@ Start the calculation with
 pw.x < cu.relax.in | tee cu.relax.out
 ```
 
-This will take quite a bit longer than the simple scf calculation we have done before. The code does the following:
+This will take quite a bit longer than the simple scf calculation we have done before. 
+
+## What is happening?
+
+The program is still doing an SCF calculation, but at the end, it calcualtes the energy and forces to move atoms in the directions it guesses would reduce the energy. Then it does another SCF calculation using the new atomic coordinates.
+
+{{% figure src="/img/atomic_relaxation_cycle.png" caption="Flow chart of the iterative optimisation of atomic coordinates" %}}
+
+The code does the following:
 
 - Start with the provided geometry
 - Calculate the total energy in a scf calculation

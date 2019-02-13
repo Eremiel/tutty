@@ -26,7 +26,7 @@ There are three *mandatory* `CARD`s:
 
 - `ATOMIC_SPECIES` contains information about the atoms. At the moment, this is only Cu. You will see the symbol for copper, it's atomic mass, and a filename describing the core electrons. More on this later.
 - `ATOMIC_POSITIONS` holds the positions of all atoms in the unit cell as fractions of the lattice vectors. 
-- `K_POINTS` defines the number of points and weights used for the first [Brillouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). Parts of the calculations are performed in reciprocal space, and the the `K_POINTS` card defines the accuracy (and cost) of these.
+- `K_POINTS` defines the number of points and weights used for the first [Brillouin zone](https://en.wikipedia.org/wiki/Brillouin_zone). Parts of the calculations are performed in reciprocal space, and the `K_POINTS` card defines the accuracy (and cost) of these.
 
 ## Control namelist
 
@@ -36,7 +36,7 @@ The first line in the `CONTROL` namelist defines the type of calculation. Every 
 - *Ab-Initio* molecular dynamics
 - Relaxation of atomic coordinates and geometric optimisation to minimise forces
 
-Here we request a `scf` calculation, which stands for **S**elf **C**onsistent **F**ield calculation. We ask the code to solve the electronic degrees of freedom, but not move the atoms. Other options include `relax`, `md`, and `bands` for band structure calculations.
+Here we request a `scf` calculation, which stands for **S**elf **C**onsistent **F**ield calculation. This means: find the electronic density for a set of atoms with fixed positions. Other options include `relax`, `md`, and `bands` for band structure calculations.
 
 The next lines in the `CONTROL` namelist define some directories the code will look in for additional information and data and a prefix for output filenames.
 
@@ -60,7 +60,7 @@ The unit cell contains **one** irreducible coordinate (`nat = 1`), which is occu
 
 ### Basisset
 
-Quantum espresso is a *plane-wave* code, which means that the wave function is exanded in plane-waves (i.e., complex-valued sin and cos). A plane-wave
+Quantum espresso is a *plane-wave* code, which means that the wave function is expanded in plane-waves (i.e., complex-valued sin and cos). A plane-wave
 
 $$ \psi({\bf r}) = \exp\left(i {\bf k}\cdot{\bf r}\right) $$
 
@@ -68,7 +68,7 @@ characterised by quantum number ${\bf k}$ has a kinetic energy of
 
 $$ \langle \psi | \nabla^2 |\psi\rangle = \frac{1}{2}{\bf k}^2 $$
 
-The bassis set is truncated by dropping plane-waves with an energy larger than the cut-off energy of 25 Ry (`ecutwf = 25.0`).
+The basis set is truncated by dropping plane-waves with an energy larger than the cut-off energy of 25 Ry (`ecutwf = 25.0`).
 
 > Rydberg is the unit for energy in atomic units. A Ry equals 13.6 eV.
 
@@ -79,25 +79,25 @@ In general, energy cut-offs need to be tested for convergence, but there are [gu
 
 ### Smearing
 
-Standard DFT formally operates at zero Kelvin. This means that there is a sharp front between occupied and unoccupied electronic states. This can lead to significant variation of the charge density during the self-consistency loop and numerical instability, especially for metallic systems. A common scheme is to **smear** out occupation across the Fermi level (i.e., most energetic occupied state) to achieve a smoother response of the charge density. This is similar to increasing the temperature (for the electrons only). Because smearing is only a numerical tool to achieve better convergence, the results need to be extrapolated back to zero temperature, which usually can be done with suffiecient accuracy for practical applications.
+Standard DFT formally operates at zero Kelvin. This means that there is a sharp front between occupied and unoccupied electronic states. This can lead to significant variation of the charge density during the self-consistency loop and numerical instability, especially for metallic systems. A common scheme is to **smear** out the occupation of electrons across the Fermi level (i.e., most energetic occupied state) to achieve a smoother response of the charge density. This is similar to increasing the temperature (for the electrons only). Because smearing is only a numerical tool to achieve better convergence, the results need to be extrapolated back to zero temperature, which usually can be done with sufficient accuracy for practical applications.
 
 The input file request a Gaussian smearing (`smearing='gaussian'`) and the `degauss=0.02` parameter sets the width of the Gaussian smearing operator.
 
 ## Electrons namelist
 
-The `ELECTRONS` namelist controls the iterative solution of the Kohn-Sham equations. Density-Functional-Theory is a mean-field theory were electrons do not directly interact with each other. Rather, the interaction is mitigated through the collective charge density. Although this avoids the complexity of the many-body problem, it leads to non-linear eigenvalue problems that require iterative solution:
+The `ELECTRONS` namelist controls the iterative solution of the Kohn-Sham equations. Density-Functional-Theory is a mean-field theory were electrons do not directly interact with each other. Instead, the interaction is mitigated through the collective charge density. Although this reduces the complexity of the many-body problem, it leads to non-linear eigenvalue problems that require iterative solution:
 
 $$ \hat {\rm H}(\rho(\psi))\cdot\psi = \epsilon \psi $$
 
 where $ \hat {\rm H} $ is the DFT Hamiltonian (or energy) operator, which depends on the charge density $\rho$, which in turn is a functional of the wavefunction $\rho({\bf r}) = \langle\psi|{\bf r}|\psi\rangle$. 
 
-There are usually a number of numerical algorithms available to diagonalise (i.e., solve) the DFT eigenvalue problem. The input file specifies the Davidson scheme (`optimisation='david'`). Metals are particularly prone to *charge sloshing* where the charge density oscilates between iterations, because of the many bands crossing the Fermi level. The `mixing_beta=0.7` parameter requests 70% of the old charge density with 30% of the new charge density in each iteration. This "damping" slows convergence down but increases numercial stability, which is a very common characteristic of iterative solvers in general.  
+There are usually a number of numerical algorithms available to diagonalise (i.e., solve) the DFT eigenvalue problem. The input file specifies the Davidson scheme (`optimisation='david'`) for this purpose. Metals are particularly prone to *charge sloshing* where the charge density oscillates between iterations, because of the many bands crossing the Fermi level. The `mixing_beta=0.7` parameter mixes 70% of the old charge density with 30% of the new charge density in each iteration. This "damping" slows convergence down but increases numerical stability, which is a very common characteristic of iterative solvers in general.  
 
 ### Cards
 
 #### Effective core potentials
 
-The `ATOMIC_SPECIES` card specifies potentials for all elements. Most DFT codes do not explicitly consider the core electrons, because they do not participate in chemical interactions. Rather they define atomic potentials that combine the effect of the positive nucleus and the core electrons on the valence electrons. Such an approach has two advantages:
+The `ATOMIC_SPECIES` card specifies potentials for all elements. Most DFT codes do not explicitly consider the core electrons, because they do not participate in chemical interactions. Instead, they define atomic potentials that combine the effect of the positive nucleus and the core electrons on the valence electrons. Such an approach has two advantages:
 
 - It requires less electrons to be considered explicitly reducing the size of the Hamiltonian and speeding up calculations
 - It allows to use a much lower energy cut-off in plane-wave codes because the spatially narrow and highly featured core region around a nucleus is not treated explicitly. This is shown in the figure below where the screened effective core potential approaches a finite value at the core, which leads to a smoother wavefunction in that region. Core potentials are constructed to guarantee that they reproduce the exact wave-function outside the core region $r_c$.
@@ -121,7 +121,7 @@ The `ATOMIC_POSITIONS` card defines the atomic coordinates. Note that we have on
 
 #### Reciprocal space
 
-Periodicity in crystaline materials means that wave functions have to obey the form
+Periodicity in crystalline materials means that wave functions have to obey the form
 
 $$ 
 \psi\_{{\rm n},{\bf k}}({\bf r}) = \exp(i{\bf k}\cdot{\bf r})\cdot u\_{\rm n}({\bf r}) 

@@ -11,7 +11,7 @@ Let's change to that directory and examine the input file.
 
 ```bash
 cd ../CuN_bulk
-subl cun.relax.in
+nano cun.relax.in
 ```
 
 This file looks fairly similar to the copper input file. But there are some noteworthy differences.

@@ -9,7 +9,7 @@ The scientific problem we are going to investigate is the stability of copper ni
 
 {{% figure src="/img/Cu3N_cycling_results.png" caption="Cycling behaviour of copper nitride in EC/DC electrolyte." %}}
 
-They provide experimental evidence for Cu formation upon reduction with initial capacities close to the theoretical expectation for full reduction of $ {\rm Cu}_3{\rm N} $ to $ {\rm Na}_3{\rm N} $ and $ {\rm Cu} $ (approx. 400 mAh/g), but limited reversiblity back to copper nitride.
+They provide experimental evidence for Cu formation upon reduction with initial capacities close to the theoretical expectation for full reduction of $ {\rm Cu}_3{\rm N} $ to $ {\rm Na}_3{\rm N} $ and $ {\rm Cu} $ (approx. 400 mAh/g), but limited reversibility back to copper nitride.
 
 The question we ask is what is the thermodynamic equilibrium potential for full reduction of $ {\rm Cu}_3{\rm N} $ to $ {\rm Cu} $. Specifically, we are interested in the thermodynamics of the reaction
 

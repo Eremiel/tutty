@@ -10,6 +10,6 @@ This lab is designed to give you a *short* introduction into the practicals of a
 - Different energy models such as 'empirical potentials' and 'Density Functional Theory'
 - Methods to explore the potential energy surface including 'Monte Carlo' and 'Molecular Dynamics' simulations
 
-In this lab, you will use Density-Functional-Theory to compute the ground-state energy of compound to investigate thermodynamic phase stability in aqueous environments.
+In this lab, you will use Density-Functional-Theory to compute the ground-state energy of a given compound to investigate its thermodynamic phase stability in aqueous environments.
 
-This will give you opportunity to gain some practical experience performing atomistic simulations. Many of the steps we will go through you find in almost all simulation work flows.
+This will give you opportunity to gain some practical experience in performing atomistic simulations. Many of the steps we will go through, are common in the majority of atomistic simulation work flows.
