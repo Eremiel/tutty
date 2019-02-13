@@ -49,7 +49,7 @@ $$
 In solid-liquid equilibria, this is less justified. We can, nonetheless, find an expression for the formation energy of $\rm Na^+$ by using some experimental information. We can regard a metallic Na electrode as reference
 
 $$
-{\rm Na}|{\rm Na}^+ : E({\rm Na}) = \Delta G_f({\rm Na}^+) - U_{\rm ref}
+{\rm Na} | {\rm Na}^+ : E({\rm Na}) = \Delta G\_{f}({\rm Na}^+) - U\_{\rm ref}
 $$
 
 This gives
