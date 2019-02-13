@@ -22,7 +22,9 @@ In principle, you can use whatever text editor you like, but your choices are li
 - `nano` is also widely available, has less features than `vim`, but comes with a much gentler entry.
 - `emacs` is even more powerful than `vim` and more user-friendly, but not that commonly available in an HPC environment.
 
-You can choose between `vim` and `nano` for this tutorial. 
+You can choose between `vim` and `nano` for this tutorial.
+
+> This [vim cheat sheet](https://ryanstutorials.net/linuxtutorial/cheatsheetvi.php) is useful if you have some experience using vim, but can't quite remember all the key shortcuts. Nano displays the most important key combinations at the bottom of the screen. The `^` stands for the Control key.
 
 Let's have a look at the input file:
 

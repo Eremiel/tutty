@@ -12,7 +12,12 @@ The crystal structure we have used is close to the equilibrium lattice constant,
 
 We need to change the input file to tell the code that we want to do a structural relaxation (`vc-relax`) instead of a simple self-consistency cylce (`scf`).
 
-- Make sure you have `cu.scf.in` open in the text editor.
+- Make a copy of the input file
+```bash
+cp cu.scf.in cu.relax.in
+```
+
+- Make sure you have `cu.relax.in` open in the text editor.
 
 - Locate the
 ```
@@ -25,7 +30,7 @@ calculation = 'vc-relax'
 
 This will instruct the code to relax the atomic positions and the unit cell (the `vc` part stands for 'variable cell'). But we need to tell it *how* to change them. Two additional `NAMELIST`s provide variables to steer the atomic position and the cell manipulations.
 
-- Add the following below the `&electrons` namelist:
+- Add the following **below** the `&electrons` namelist:
 ```
 &ions
   ion_dynamics = 'bfgs'
