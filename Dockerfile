@@ -19,6 +19,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 COPY terminal/prompt.sh /etc/profile.d/prompt.sh
+COPY terminal/env.sh /etc/profile.d/env.sh
 COPY terminal/motd /etc/motd
 COPY terminal/bashrc /etc/skel/.bashrc
 
