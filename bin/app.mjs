@@ -6,12 +6,15 @@ import server from 'socket.io';
 import { spawn } from 'node-pty';
 import EventEmitter from 'events';
 import favicon from 'serve-favicon';
-import githubOAuth from 'github-oauth';
-import {githubUsername,validateAuthToken, createAuthToken} from './oauth.mjs';
+import util from 'util';
+
 const { exec } = require('child_process');
-var jwt = require('jsonwebtoken');
 import cookieParser from 'cookie-parser';
 var cookie = require('cookie')
+import { validateAuthToken, createAuthToken } from './oauth.mjs';
+
+/* First step - initialise router */
+const app = express();
 
 /****************************************************************************************
  * Process configuration 
@@ -48,67 +51,79 @@ redis_client.on("error", (err) => {
 });
 
 /****************************************************************************************
- * Express routes 
+ * Passport initialisation
  ****************************************************************************************/
+import passport from 'passport';
+import GitHubStrategy from 'passport-github2';
 
-const app = express();
-// app.use(favicon(`public/favicon.ico`));
+/* passport middleware */
+app.use(passport.initialize());
+app.use(passport.session());
 
-/* oauth handler */
-const oauth = githubOAuth({
-  githubClient: config.AUTH_REQUEST.client_id,
-  githubSecret: config.AUTH_REQUEST.client_secret,
-  scope: config.AUTH_REQUEST.scope, // optional, default scope is set to user
-  baseURL: config.AUTH_REQUEST.redirect_uri,
-  loginURI: config.LOGIN_PATH,
-  callbackURI: config.CALLBACK_PATH
-});
+passport.use(new GitHubStrategy({
+    clientID: config.AUTH_REQUEST.client_id,
+    clientSecret: config.AUTH_REQUEST.client_secret,
+    callbackURL: config.CALLBACK_PATH
+  },
+  function(accessToken, refreshToken, profile, done) {
+    //console.log(`New authentication with profile: ${util.inspect(profile)}`);
+    console.log(`New authentication with username: ${profile.username}`);
+    return done(null, profile.username);
+  }
+));
 
-app.get(config.LOGIN_PATH, (req,res) => {
-  return oauth.login(req, res);
-})
+passport.serializeUser(function(user, done) { done(null, user); });
+passport.deserializeUser(function(user, done) { done(null, user); });
 
-app.get(config.CALLBACK_PATH, (req,res) => {
-  return oauth.callback(req, res);
-})
+/*
+  Local validation of requests
+*/
+function validRequest(req, res, next) {
 
-// Check if authentication cookie is configured and redirect if not
-app.use(cookieParser());
-app.use( (req, res, next) => {
-  const token = req.cookies['authToken'];
   try {
-    validateAuthToken(token);
-  } catch (err) {
+    const token = validateAuthToken(req.cookies.authToken)
+    if ( token ) { 
+      next();
+    } else {
+      throw new Error(`Invalid token [${token}]`);
+    }
+  } catch (Error) {
     res.redirect(config.LOGIN_PATH);
     res.send();
   }
   
-  next();
-});
+}
+
+/****************************************************************************************
+ * Express routes 
+ ****************************************************************************************/
+
+// app.use(favicon(`public/favicon.ico`));
+
+// Check if authentication cookie is configured and redirect if not
+app.use(cookieParser());
+
+app.get(config.LOGIN_PATH, passport.authenticate('github'));
+
+app.get(config.CALLBACK_PATH, 
+  passport.authenticate('github'), (req,res) => {
+    if ( req.user ) {
+      // Create a jwt and stor in a cookie for socket.io access
+      res.cookie('authToken', createAuthToken(req.user));
+      res.redirect(config.AUTH_REQUEST.redirect_uri);
+      //res.send('success')
+      console.log(`Validated new login for user: ${req.user}`);
+    } else {
+      console.error('Callback error. Request does not have a user object.')
+      res.redirect('/404.html');
+    }
+  }
+);
 
 // For serving css and javascript
-app.use('/', express.static(path.join(app.path(), 'public')));
-
-oauth.on('error', function(err) {
-  console.error('there was a login error', err)
-})
-
-oauth.on('token', function(token, res) {
-  // Obtain username, sign new web token, and store as cookie
-  // Then redirect to landing page
-  githubUsername(token)
-    .then( (username) => {
-        res.cookie('authToken', createAuthToken(username));
-        res.redirect(config.AUTH_REQUEST.redirect_uri);
-        res.send();
-        console.log(`Validated new login for user: ${username}`);
-      },
-      (err) => {
-        res.redirect('/404.html');
-      }
-    );
-  
-});
+app.use('/', validRequest, 
+  express.static(path.join(app.path(), 'public'))
+);
 
 /****************************************************************************************
  * HTTP Server Implementaiton
