@@ -3,12 +3,13 @@ version: "3"
 services:
   web:
     build: .
-    command: sh -c "yarn install && NODE_ENV=development yarn start"
+    command: sh -c "yarn install && NODE_ENV=development yarn concurrently npm:start:client npm:start:server"
     container_name: node
     volumes:
       - .:/app
       - /app/node_modules
       - ./public:/app/public
+      - ./terminal/libnss-ldap.conf:/etc/libnss-ldap.conf33
     tty: true
     working_dir: /app
     ports:
@@ -20,17 +21,24 @@ services:
   hugo:
     container_name: hugo
     image: klakegg/hugo:latest
-    command: --watch
+    command: -vw
     volumes:
-      - .:/src
-      - ./public:/target
-    ports:
-      - "1313:1313"
+      - ./site:/src
+      - ./dist:/target
   redis:
     container_name: redis
     image: redis
     ports:
       - "6379:6379"
+  ldap:
+    container_name: ldap
+    image: osixia/openldap
+    ports:
+      - "389:389" 
+      - "636:636"
+    # environment:
+    #   - LDAP_DOMAIN="test.com"
+    #   - LDAP_ADMIN_PASSWORD="JonSn0w"
 volumes:
   public:
 

@@ -1,5 +1,5 @@
 # --- build Quantum Espresso ---
-FROM debian:jessie as qe-builder
+FROM debian:stretch as qe-builder
 
 RUN apt-get -y update && \
     apt-get install -y gfortran make git tar bash && \
@@ -11,7 +11,7 @@ RUN ./configure LDFLAGS="-static-libgfortran -static-libgcc -Bstatic"
 RUN make all
 
 
-FROM node:8.15.0-jessie
+FROM node:10.14.0-stretch
 MAINTAINER d.kramer@soton.ac.uk
 
 RUN apt-get update -y && \
@@ -40,4 +40,13 @@ ENV PSEUDO_DIR=/potentials
 ENV TMP_DIR=/tmp
 RUN mkdir -p /tmp && chmod a+w /tmp
 
-CMD yarn --dev && node bin
+# Install NSS
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -yq libnss-ldap && \
+  rm -rf /var/lib/apt/lists/*
+COPY terminal/nsswitch.conf /etc/nsswitch.conf
+COPY terminal/libnss-ldap.conf /etc/libnss-ldap.conf
+
+# Install development environments
+
+#CMD yarn --dev && node bin/index.js

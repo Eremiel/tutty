@@ -12,8 +12,9 @@ pids
 logs
 results
 public 
+dist
 
 npm-debug.log
-node_modules/*
+node_modules
 .esm-cache
 .DS*
