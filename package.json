@@ -30,10 +30,6 @@
   "bin": {
     "wetty": "./bin/index.js"
   },
-  "pre-commit": [
-    "fix",
-    "commit"
-  ],
   "preferGlobal": "true",
   "@std/esm": {
     "cjs": "true"
