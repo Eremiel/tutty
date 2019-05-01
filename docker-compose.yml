@@ -4,11 +4,11 @@ services:
   web:
     build: .
     command: sh -c "yarn install && NODE_ENV=development yarn concurrently npm:start:client npm:start:server"
-    container_name: node
+    container_name: web
     volumes:
       - .:/app
       - /app/node_modules
-      - ./public:/app/public
+      - ./dist/public:/app/public
       - ./terminal/libnss-ldap.conf:/etc/libnss-ldap.conf33
     tty: true
     working_dir: /app
@@ -18,18 +18,28 @@ services:
 #      - AUTH_REQUEST_REDIRECT_URI=http://dft-lab.kramergroup.science
 #      - AUTH_REQUEST_ID=31750f49c73255d846df
 #      - AUTH_REQUEST_SECRET=1f2a00c4ef7fe7e923ed60fbaa6b45ca822f20ed
+  
   hugo:
     container_name: hugo
     image: klakegg/hugo:latest
     command: -vw
     volumes:
       - ./site:/src
-      - ./dist:/target
+      - ./dist/public:/target
+  
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend
+    tty: true
+
   redis:
     container_name: redis
     image: redis
     ports:
       - "6379:6379"
+  
   ldap:
     container_name: ldap
     image: osixia/openldap
@@ -39,6 +49,7 @@ services:
     # environment:
     #   - LDAP_DOMAIN="test.com"
     #   - LDAP_ADMIN_PASSWORD="JonSn0w"
+
 volumes:
   public:
 

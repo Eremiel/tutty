@@ -10,6 +10,11 @@ WORKDIR /q-e
 RUN ./configure LDFLAGS="-static-libgfortran -static-libgcc -Bstatic"
 RUN make all
 
+FROM golang:1.10 as hostmgr-builder
+
+RUN git clone https://github.com/kramergroup/hostmgr.git /go/src/github.com/kramergroup/hostmgr
+WORKDIR /go/src/github.com/kramergroup/hostmgr
+RUN CGO_ENABLED=1 go build -o hostmgr cmd/hostmgr/main.go
 
 FROM node:10.14.0-stretch
 MAINTAINER d.kramer@soton.ac.uk
@@ -46,6 +51,8 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 COPY terminal/nsswitch.conf /etc/nsswitch.conf
 COPY terminal/libnss-ldap.conf /etc/libnss-ldap.conf
+
+COPY --from=hostmgr-builder /go/src/github.com/kramergroup/hostmgr /usr/sbin/hostmgr
 
 # Install development environments
 

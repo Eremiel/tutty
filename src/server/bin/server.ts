@@ -39,7 +39,7 @@ const trim = (str: string): string => str.replace(/\/*$/, '');
     //   }}))
     .use(helmet())
     .use(cookieParser())
-    .use('/',express.static(path.join(app.path(), 'dist')));
+    .use('/',express.static(path.join(app.path(), 'public')));
 
   return socket(
      http.createServer(app).listen(port, host, () => {

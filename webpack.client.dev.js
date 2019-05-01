@@ -25,7 +25,7 @@ module.exports = {
     },
     output: {
       filename: '[name].js',
-      path: path.resolve(__dirname, 'dist/js')
+      path: path.resolve(__dirname, 'dist/public/js')
     },
     watchOptions: {
       ignored: /node_modules/
