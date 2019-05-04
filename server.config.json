@@ -5,8 +5,11 @@
       "client_secret": "3ab37ada5d5f6af1ba469787866f3eb57f63825c",
       "scope": "read:org user:email"
   },
-  "SESSION_DURATION": 21600,
-  "SESSION_SECRET": "keyboard cat",
+  "WEBTOKEN": {
+    "DURATION": 21600,
+    "SECRET": "keyboard cat",
+    "COOKIE_NAME": "authToken"
+  },
   "CALLBACK_PATH": "/callback",
   "LOGIN_PATH": "/login",
   "ORGANIZATION": "FaradayInstitution",

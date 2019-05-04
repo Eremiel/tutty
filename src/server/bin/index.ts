@@ -1,6 +1,12 @@
+import logger from './logger';
+
+/* Reading the configuration is the first thing to do */
+import config from './config';
+config.ReadFromFile('server.config.json'); 
+config.ReadFromEnv();
+
 import optimist = require("optimist");
 import wetty from './emitter';
-import logger from './logger';
 
 /* Options */
 

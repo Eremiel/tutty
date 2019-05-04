@@ -12,3 +12,14 @@ export interface SSH {
   pass?: string;
   key?: string;
 }
+
+export interface Group {
+  groupname:  string;
+  gid:        number;
+}
+
+export interface User {
+  username:   string;
+  uid:        number;
+  gid:        number;
+}
