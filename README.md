@@ -1,23 +1,23 @@
 # Tutorial Template
 
-This platform provides an in-browser environment for online tutorials. It is meant as a 
-starting point for developing interactive, terminal-based tutorials. 
+This platform provides an in-browser environment for online tutorials. It is meant as a
+starting point for developing interactive, terminal-based tutorials.
 
 The platform provides a web-interface that shows guidance on the left-hand side and a terminal
-window to follow along and try out things on the right hand-side. 
+window to follow along and try out things on the right hand-side.
 
 ## Getting started
 
-The platform relies on multiple components that all work together. A fully functional containerized development 
+The platform relies on multiple components that all work together. A fully functional containerized development
 environment can be started with
 
 ```bash
 docker-compose up
 ```
 
-After start-up (which can take a few moments), the webpage should be available at 
+After start-up (which can take a few moments), the webpage should be available at
 
-```
+```url
 http://localhost:3000
 ```
 
