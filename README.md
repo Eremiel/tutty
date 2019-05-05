@@ -61,7 +61,7 @@ Most of the editing should happen in the `content` folder.
 
 The frontend is a [Node.js](https://nodejs.org/)-based web application that has two components:
 
-- `backend` implements the webserver with routing facilities and a [Websocket](https://en.wikipedia.org/wiki/WebSocket) to channel terminal data between the client browser and the backend. 
+- `backend` implements the webserver with routing facilities and a [Websocket](https://en.wikipedia.org/wiki/WebSocket) to channel terminal data between the client browser and the backend.
 - `client` provides a client-side JavaScript for managing the terminal.
 
 Both are strongly based on [Wetty](https://github.com/krishnasrinivas/wetty), a in-browser terminal similar to [Anyterm](https://anyterm.org/).
