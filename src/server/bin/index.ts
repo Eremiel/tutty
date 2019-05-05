@@ -41,6 +41,14 @@ const opts = optimist
       demand     : false,
       alias      : 'p',
       description: "Password for ssh connections to backing instances (requires sshuser)"
+    },
+    sshport: {
+      demand     : false,
+      description: "Port where the ssh server is listening for connections",
+    },
+    sshauth: {
+      demand     : false,
+      description: "Authentication method for ssh (publickey, password, hostbased)"
     }
 
   })
@@ -49,14 +57,16 @@ const opts = optimist
 /* Consants and override properties with environment variables */
 const port      = opts.port || process.env.PORT || 3000;
 const iface     = opts.interface || process.env.INTERFACE || "0.0.0.0";
-const sshhost   = opts.sshhost || process.env.SSH_HOST || ""; // defaults to this machine (diables ssh)
+const sshhost   = opts.sshhost || config.Instance.BACKEND.HOST || process.env.SSH_HOST || ""; // defaults to this machine (diables ssh)
+const sshport   = opts.sshport || config.Instance.BACKEND.PORT || process.env.SSH_PORT || 22;
+const sshauth   = opts.sshauth || config.Instance.BACKEND.AUTH_METHOD || process.env.SSH_AUTH_METHOD || "hostbased";
 
 const base      = "/wetty"
 
 /* Start the application */
 
 wetty.start(
-  {user:"",host:sshhost,port:22,auth:"publickey"},
+  {user:"",host:sshhost,port:sshport,auth:sshauth},
   {base:base,port:port,host:iface},"bash"
 );
 //createServer({base:'/wetty',port:port,host:'localhost'});

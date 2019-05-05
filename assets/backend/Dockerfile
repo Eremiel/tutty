@@ -4,7 +4,7 @@ RUN git clone https://github.com/kramergroup/hostmgr.git /go/src/github.com/kram
 WORKDIR /go/src/github.com/kramergroup/hostmgr
 RUN CGO_ENABLED=1 go build -o hostmgr cmd/hostmgr/main.go
 
-FROM ubuntu:latest
+FROM debian
 MAINTAINER d.kramer@soton.ac.uk
 
 RUN apt-get update -y && \
@@ -13,22 +13,22 @@ RUN apt-get update -y && \
     mkdir -p /run/sshd && \
     rm -rf /var/lib/apt/lists/*
 
-COPY terminal/prompt.sh /etc/profile.d/prompt.sh
-COPY terminal/env.sh /etc/profile.d/env.sh
-COPY terminal/motd /etc/motd
-COPY terminal/bashrc /etc/skel/.bashrc
-COPY terminal/nsswitch.conf /etc/nsswitch.conf
-COPY terminal/libnss-ldap.conf /etc/libnss-ldap.conf
+COPY assets/backend/prompt.sh /etc/profile.d/prompt.sh
+COPY assets/backend/env.sh /etc/profile.d/env.sh
+COPY assets/backend/motd /etc/motd
+COPY assets/backend/bashrc /etc/skel/.bashrc
+COPY assets/backend/nsswitch.conf /etc/nsswitch.conf
+COPY assets/backend/libnss-ldap.conf /etc/libnss-ldap.conf
 
 EXPOSE 3000
 
 WORKDIR /root
 
 COPY --from=0 /go/src/github.com/kramergroup/hostmgr/hostmgr /usr/sbin/hostmgr
-COPY terminal/supervisord.conf /etc/supervisord.conf
-COPY terminal/sshd_config /etc/ssh/sshd_config
+COPY assets/backend/supervisord.conf /etc/supervisord.conf
+COPY assets/backend/sshd_config /etc/ssh/sshd_config
 
-# Create a custom group for tutorial users
-RUN addgroup --gid 2000 tutorial
+# Automatically create home directories
+RUN echo "session    required   pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-account 
 
 ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]

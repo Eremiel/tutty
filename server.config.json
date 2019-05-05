@@ -24,5 +24,11 @@
   "LDAP_BASE": "dc=example,dc=org",
   "LDAP_ADMIN_DN": "cn=admin,dc=example,dc=org",
   "LDAP_ADMIN_PASSWORD": "admin",
-  "LDAP_ID_RANGE_START": 1200
+  "LDAP_ID_RANGE_START": 1200,
+
+  "BACKEND": {
+    "HOST": "backend",
+    "PORT": 22,
+    "AUTH_METHOD": "hostbased"
+  }
 }

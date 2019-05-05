@@ -34,7 +34,8 @@ export function githubStrategy():github.Strategy {
       */
       LdapUser.FindByName(profile.username, (err, user) => {
         
-        if ( err === null || err === undefined) {
+        if ( (err === null || err === undefined) && (user != null && user != undefined) ) {
+          logger.info(`Looked-up user: ${JSON.stringify(user)}`);
           return done(err,user);
         } else {
           LdapUser.CreateUser(profile.username, (err, user) => {

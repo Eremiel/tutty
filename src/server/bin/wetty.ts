@@ -3,12 +3,13 @@
  * @module WeTTy
  */
 import * as EventEmitter from 'events';
-import SocketIO from 'socket.io';
+import * as SocketIO from 'socket.io';
 import server from './server';
 import getCommand from './command';
 import term from './term';
 import { SSH, Server } from './interfaces';
 import logger from './logger';
+import config from './config';
 
 export default class WeTTy extends EventEmitter {
   /**
@@ -16,12 +17,20 @@ export default class WeTTy extends EventEmitter {
    * @name start
    */
   public start(
-    ssh: SSH = { user: '', host: 'localhost', auth: 'password', port: 22 },
+
+    ssh: SSH = { 
+      user: '', 
+      host: config.Instance.BACKEND.HOST, 
+      auth: config.Instance.BACKEND.AUTH_METHOD, 
+      port: config.Instance.BACKEND.PORT 
+    },
     serverConf: Server = { base: '/wetty', port: 3000, host: '0.0.0.0' },
     command: string = ''
   ): void {
+    
     logger.info('wetty is starting');
     const io = server(serverConf);
+    
     /**
      * Wetty server connected too
      * @fires WeTTy#connnection
@@ -35,8 +44,9 @@ export default class WeTTy extends EventEmitter {
         msg: `Connection accepted.`,
         date: new Date(),
       });
-      //const { args, user: sshUser } = getCommand(socket, ssh, command);
-      const { args, user: sshUser } = {args: ["bash"], user: false};
+      
+      const { args, user: sshUser } = getCommand(socket, ssh, command);
+      //const { args, user: sshUser } = {args: ["bash"], user: false};
       this.emit('debug', `sshUser: ${sshUser}, cmd: ${args.join(' ')}`);
       if (sshUser) {
         term.spawn(socket, args);
@@ -55,6 +65,9 @@ export default class WeTTy extends EventEmitter {
     });
 
   }
+
+ 
+  
 
   /**
    * terminal spawned

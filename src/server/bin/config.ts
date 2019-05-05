@@ -14,10 +14,17 @@ interface WebtokenConfig {
   COOKIE_NAME:    string;
 }
 
+interface BackendConfig {
+  HOST:           string;
+  PORT:           number;
+  AUTH_METHOD:    string;
+}
+
 export class Configuration {
 
   AUTH_REQUEST:       AuthRequestConfig;
   WEBTOKEN:           WebtokenConfig;
+  BACKEND:            BackendConfig;
   SESSION_SECRET:     string;
   CALLBACK_PATH:      string;
   LOGIN_PATH:         string;

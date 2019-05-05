@@ -2,14 +2,15 @@ version: "3"
 
 services:
   web:
-    build: .
-    command: sh -c "yarn install && NODE_ENV=development yarn concurrently npm:start:client npm:start:server"
+    build: 
+      context: .
+      dockerfile: assets/web/Dockerfile.dev
+    command: sh -c "yarn install && NODE_ENV=development yarn concurrently npm:start:client npm:start:server npm:start:hostmgr"
     container_name: web
     volumes:
       - .:/app
       - /app/node_modules
       - ./dist/public:/app/public
-      - ./terminal/libnss-ldap.conf:/etc/libnss-ldap.conf33
     tty: true
     working_dir: /app
     ports:
@@ -30,9 +31,10 @@ services:
   backend:
     build: 
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: assets/backend/Dockerfile
     container_name: backend
     tty: true
+    privileged: true
 
   redis:
     container_name: redis

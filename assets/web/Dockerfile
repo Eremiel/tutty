@@ -55,5 +55,5 @@ COPY terminal/libnss-ldap.conf /etc/libnss-ldap.conf
 COPY --from=hostmgr-builder /go/src/github.com/kramergroup/hostmgr /usr/sbin/hostmgr
 
 # Install development environments
-
+COPY assets/web/ssh_config /etc/ssh/ssh_config
 #CMD yarn --dev && node bin/index.js
