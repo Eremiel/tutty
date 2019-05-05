@@ -56,4 +56,6 @@ COPY --from=hostmgr-builder /go/src/github.com/kramergroup/hostmgr /usr/sbin/hos
 
 # Install development environments
 COPY assets/web/ssh_config /etc/ssh/ssh_config
+
+
 #CMD yarn --dev && node bin/index.js

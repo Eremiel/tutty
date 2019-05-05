@@ -5,6 +5,8 @@ import LdapUser from './ldap'
 import config from "./config"
 import logger from './logger';
 
+import { User } from './interfaces';
+
 /****************************************************************************************
  * User database actions
  ****************************************************************************************/
@@ -32,21 +34,16 @@ export function githubStrategy():github.Strategy {
         Obtain user data from ldap service or create new record if user 
         is unknown.
       */
-      LdapUser.FindByName(profile.username, (err, user) => {
-        
-        if ( (err === null || err === undefined) && (user != null && user != undefined) ) {
-          logger.info(`Looked-up user: ${JSON.stringify(user)}`);
-          return done(err,user);
-        } else {
-          LdapUser.CreateUser(profile.username, (err, user) => {
-            logger.info(`Added user: ${JSON.stringify(user)}`);
-            return done(err, user);
-          })
-        }
-      }
-    );
-  });
-
+     try {
+      lookupUserCreateIfNeeded(profile.username, (err, user) => {    
+        return done(err, user);
+      });
+     } catch (err) {
+       return done(err, null);
+     }
+      
+    }
+  );
 }
 
 
@@ -59,8 +56,12 @@ export function tokenStrategy(cookieName: string): CookieStrategy {
     }, 
     function(token, done) {    
       try {
-        var user = validateAuthToken(token);
-        return done(null, user);
+        
+        var tokenUser = validateAuthToken(token);
+        lookupUserCreateIfNeeded(tokenUser.username, (err,user) => {
+          logger.debug(`Error: ${err}`);
+          return done(err, user);
+        })  
       } catch(err) {
         logger.error( `Cookie strategy failed with error: ${err}` )
         return done(err, null);
@@ -69,11 +70,37 @@ export function tokenStrategy(cookieName: string): CookieStrategy {
   );
 }
 
+/* 
+  Obtain user data from ldap service or create new record if user 
+  is unknown.
+*/
+function lookupUserCreateIfNeeded(username: string, cb: (err: Error, user: User) => void) : void {
+
+
+     LdapUser.FindByName(username, (err, user) => {
+        
+      if ( (err === null || err === undefined) && (user != null && user != undefined) ) {
+        logger.debug(`Looked-up user: ${JSON.stringify(user)}`);
+        return cb(err,user);
+      } else {
+        LdapUser.CreateUser(username, (err, user) => {
+          logger.info(`Added user: ${JSON.stringify(user)}`);
+          return cb(err, user);
+        })
+      }
+    });
+
+}
 
 
 // /****************************************************************************************
 //  * Web token
 //  ****************************************************************************************/
+
+export class WebToken {
+  username:             string;
+  lastAuthenticatedOn:  Date;
+}
 
 /*
 Name:    validateAuthToken 
@@ -82,12 +109,12 @@ Purpose: validates the authentication cookie
 
 @return {string} The decrypten authentication Token or undefined if no valid token was provided
 */
-export function validateAuthToken(token: string): string | object {
+export function validateAuthToken(token: string): WebToken {
   
   if (token === undefined) throw new Error("Invalid token [undefined]");
   var data = jwt.verify(token, config.Instance.PUBLIC_KEY.trim(), { algorithms: ['RS256'] })
   if ( data === null ) throw new Error("Could not verify token.")
-  return data;
+  return data as WebToken;
 }
 
 /*
@@ -110,5 +137,5 @@ export function createAuthToken(username: string): string {
       expiresIn: config.Instance.WEBTOKEN.DURATION,
       algorithm: 'RS256'
     } // Options
-  )
+  );
 }
