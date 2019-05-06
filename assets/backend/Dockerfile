@@ -24,6 +24,9 @@ EXPOSE 3000
 
 WORKDIR /root
 
+ENV REDIS_URL redis://redis:6379
+ENV REDIS_FILTER tutty:
+
 COPY --from=0 /go/src/github.com/kramergroup/hostmgr/hostmgr /usr/sbin/hostmgr
 COPY assets/backend/supervisord.conf /etc/supervisord.conf
 COPY assets/backend/sshd_config /etc/ssh/sshd_config

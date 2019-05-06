@@ -41,6 +41,10 @@ RUN apt-get update -y && \
 
 EXPOSE 3000
 
+# Configuration of container 
+ENV REDIS_URL redis://redis:6379
+ENV REDIS_FILTER tutty:
+
 WORKDIR /app
 
 # Configure ssh environment
@@ -55,7 +59,7 @@ RUN yarn install && rm package.json *.lock
 COPY server.config.json /app
 
 # Static site
-ONBUILD COPY --from=site-builder /target /app/public
+#ONBUILD COPY --from=site-builder /target /app/public
 
 # Supervisor
 COPY assets/web/supervisord.conf /etc/supervisord.conf

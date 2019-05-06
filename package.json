@@ -16,7 +16,7 @@
     "start:hugo": "hugo -d ../dist/public -s site -vw",
     "start:client": "webpack --config webpack.client.dev.js --watch",
     "start:server": "ts-node-dev --respawn --transpileOnly ./src/server/bin/index.ts",
-    "start:hostmgr": "hostmgr --client --host redis://redis:6379 --filter /test",
+    "start:hostmgr": "hostmgr --client --host redis://redis:6379 --filter tutty:",
     "preview": "run-p preview:**",
     "preview:hugo": "yarn start:hugo -- -D -F",
     "preview:webpack": "yarn start:webpack",
