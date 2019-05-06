@@ -1,6 +1,6 @@
 import { spawn } from 'node-pty';
-import { isUndefined } from 'lodash';
-import SocketIO from 'socket.io';
+import { isUndefined } from 'lodash'; 
+import * as SocketIO from 'socket.io';
 import logger from './logger';
 import events from './emitter';
 

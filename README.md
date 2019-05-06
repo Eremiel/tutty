@@ -4,7 +4,10 @@ This platform provides an in-browser environment for online tutorials. It is mea
 starting point for developing interactive, terminal-based tutorials.
 
 The platform provides a web-interface that shows guidance on the left-hand side and a terminal
-window to follow along and try out things on the right hand-side.
+window to follow along and try out things on the right hand-side.  
+
+**This is the development environment for the platform. If you are interested in using it, head over to the
+sample project.**
 
 ## Getting started
 
