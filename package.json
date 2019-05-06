@@ -32,7 +32,6 @@
   "bin": {
     "wetty": "./bin/index.js"
   },
-  "preferGlobal": "true",
   "dependencies": {
     "@types/cookie-parser": "^1.4.1",
     "@types/express": "^4.16.1",

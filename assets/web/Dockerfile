@@ -33,7 +33,7 @@ RUN yarn build:client
 
 # -------------------------------------------------------------------------------------------------
 FROM node:10.14.0-stretch
-MAINTAINER d.kramer@soton.ac.uk
+LABEL maintainer="d.kramer@soton.ac.uk"
 
 RUN apt-get update -y && \
     apt-get install -y python bash git nano vim supervisor && \
