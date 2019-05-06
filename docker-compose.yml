@@ -9,30 +9,12 @@ services:
     container_name: web
     volumes:
       - .:/app
-      - /app/node_modules
-      - ./dist/public:/app/public
+      - ./site:/app/public
       - ./dist/bin:/app/bin
     tty: true
     working_dir: /app
     ports:
       - "3000:3000"
-#    environment:
-#      - AUTH_REQUEST_REDIRECT_URI=http://dft-lab.kramergroup.science
-#      - AUTH_REQUEST_ID=31750f49c73255d846df
-#      - AUTH_REQUEST_SECRET=1f2a00c4ef7fe7e923ed60fbaa6b45ca822f20ed
-  # web:
-  #   container_name: web
-  #   image: frontend:latest
-  #   ports:
-  #     - "3000:3000"
-
-  hugo:
-    container_name: hugo
-    image: klakegg/hugo:latest
-    command: -vw
-    volumes:
-      - ./site:/src
-      - ./dist/public:/target
   
   backend:
     build: 

@@ -33,6 +33,16 @@ The platform creates the following containers:
 | `redis`   | A [Redis](https://redis.io) instance for maintaining state and coordination between front-end and backend |
 | `ldap`    | An [OpenLDAP](https://www.openldap.org/) server for managing users.                                       |
 
+## Compile for production
+
+The platform is distributed as a Docker container build. To trigger the build use
+
+```bash
+docker build -t eu.gcr.io/kramergroup/tutorial-frontend -f Dockerfile .
+```
+
+
+
 ## Repository structure
 
 The repository contains source code for the frontend, the souces for a sample tutorial, as well as a backend template. The top-level folder contains:

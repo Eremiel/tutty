@@ -1,0 +1,68 @@
+<html>
+
+  <style>
+    div.workarea {
+      width: 100%;
+      top:300px;
+      bottom: 0;
+      position: absolute;
+      margin: 10px;
+    }
+
+    div.guidance {
+      background: white;
+      padding: 10px;
+      margin: 10px;
+      position: absolute;
+      height: 270px;
+      width: 100%;
+    }
+
+    /* xterm.js sets the background color on the body tag! Need to override */
+    body {
+      background-color: aliceblue !important; 
+    }
+  </style>
+<body>
+
+  <div class="guidance">
+    <h1>TuTTY - Terminal-powered tutorials</h1>
+
+    <p>
+      This environment provides a web-based terminal for tutorials. You currently see the development page, which 
+      implements the bare basics of the environment. 
+    </p>
+
+    <p>
+      The terminal is a simple debian container. You have been automatically logged in with your username. Try it:
+      <code>whoami</code>
+    </p>
+  </div>
+
+  <!--
+    Provide an area for the terminal on the page. The actual terminal has to have id=terminal 
+    for the JavaScript to attach to the right <div/>
+  -->
+  <div class="workarea">
+    <div id="overlay">
+      <div class="error">
+        <div id="msg"></div>
+        <input type="button" onclick="location.reload();" value="reconnect" />
+      </div>
+    </div>
+    <div id="options">
+      <a class="toggler"
+         href="#" 
+         alt="Toggle options"><i class="fas fa-cogs"></i></a>
+      <textarea class="editor"></textarea>
+    </div>
+    <div id="terminal"></div>
+  </div>
+
+  <!--
+    Load the client JavaScript managing the terminal session
+  -->
+  <script type="text/javascript" src="/wetty/client.js"></script>
+</body>
+
+</html>
