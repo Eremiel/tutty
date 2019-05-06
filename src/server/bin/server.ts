@@ -17,7 +17,7 @@ import { User } from './interfaces';
 
 import { Server } from './interfaces';
 import * as socket from 'socket.io';
-import SocketIO from 'socket.io'; 
+import * as SocketIO from 'socket.io'; 
 
 import path = require('path');
 
@@ -91,7 +91,7 @@ passport.deserializeUser(
       }
     )
     .use('/', 
-      passport.authenticate('cookie'),
+      passport.authenticate('cookie', {failureRedirect: config.Instance.LOGIN_PATH}),
       express.static(path.join(app.path(), 'public')));
   
   return socket(

@@ -54,17 +54,16 @@ export function tokenStrategy(cookieName: string): CookieStrategy {
     {
       cookieName: cookieName,
     }, 
-    function(token, done) {    
+    function(token:string , done: (err, user) => void) {    
       try {
-        
         var tokenUser = validateAuthToken(token);
         lookupUserCreateIfNeeded(tokenUser.username, (err,user) => {
           logger.debug(`Error: ${err}`);
-          return done(err, user);
+          return done(null, user);
         })  
       } catch(err) {
         logger.error( `Cookie strategy failed with error: ${err}` )
-        return done(err, null);
+        return done(null,false); // Just indicate that authentication failed.
       }
     }
   );
