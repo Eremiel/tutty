@@ -90,6 +90,10 @@ passport.deserializeUser(
         res.redirect(config.Instance.AUTH_REQUEST.redirect_uri);
       }
     )
+    .use(`${basePath}/client.js`, (req,res) => {
+      logger.debug(`Sending client.js [/app/bin/client.js]`);
+      res.sendFile("/app/bin/client.js");
+    })
     .use('/', 
       passport.authenticate('cookie', {failureRedirect: config.Instance.LOGIN_PATH}),
       express.static(path.join(app.path(), 'public')));
