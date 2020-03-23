@@ -5,12 +5,16 @@ services:
     build: 
       context: .
       dockerfile: assets/web/Dockerfile.dev
-    command: sh -c "yarn install && NODE_ENV=development yarn concurrently npm:start:client npm:start:server npm:start:hostmgr"
+    command: sh -c "yarn install && NODE_ENV=development yarn concurrently npm:start:client npm:start:server"
     container_name: web
     volumes:
       - .:/app
       - ./site:/app/public
       - ./dist/bin:/app/bin
+      - ./assets/certs/keys/ssh_web_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ./assets/certs/keys/ssh_web_host_rsa_key.pub:/etc/ssh/ssh_host_rsa_key.pub
+      - ./assets/certs/keys/ssh_web_host_rsa_key-cert.pub:/etc/ssh/ssh_host_rsa_key-cert.pub
+      - ./assets/certs/config/ssh_known_hosts:/etc/ssh/ssh_known_hosts
     tty: true
     working_dir: /app
     ports:
@@ -23,13 +27,13 @@ services:
     container_name: backend
     tty: true
     privileged: true
+    volumes:
+      - ./assets/assets/ca/ca.pub:/etc/ssh/ca-local.pub
+      - ./assets/certs/config/ssh_known_hosts:/etc/ssh/ssh_known_hosts
+      - ./assets/certs/keys/ssh_backend_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ./assets/certs/keys/ssh_backend_host_rsa_key.pub:/etc/ssh/ssh_host_rsa_key.pub
+      - ./assets/certs/keys/ssh_backend_host_rsa_key-cert.pub:/etc/ssh/ssh_host_rsa_key-cert.pub
 
-  redis:
-    container_name: redis
-    image: redis
-    ports:
-      - "6379:6379"
-  
   ldap:
     container_name: ldap
     image: osixia/openldap
@@ -39,7 +43,7 @@ services:
     # environment:
     #   - LDAP_DOMAIN="test.com"
     #   - LDAP_ADMIN_PASSWORD="JonSn0w"
-
+    
 volumes:
   public:
 

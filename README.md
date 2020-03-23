@@ -11,8 +11,25 @@ sample project.**
 
 ## Getting started
 
-The platform relies on multiple components that all work together. A fully functional containerized development
-environment can be started with
+The platform relies on multiple components that all work together:
+
+1. A web application serving the static webpage content and terminal websocket
+2. A backend with ssh access
+3. An LDAP server managing users
+
+A number of certificates are needed for communication between the frontend and backend. These can be generated with:
+
+```bash
+cd assets/certs
+docker build -t ca-builder .
+docker run -v "$(pwd):/data" ca-builder
+```
+
+This will create a certificate authority (CA) if not present and create signed host keys for the front- and backend. These are located in the `certs/ca` and `certs/keys` folders. Needed configuration files are located in `certs/config`.
+
+> Note that the CA will be password-protected. Please note the password. The generated files are sensitive and should not be put under version control.
+
+Once signed keys and config files are generted, a fully functional containerized development environment can be started with
 
 ```bash
 docker-compose up
@@ -30,7 +47,6 @@ The platform creates the following containers:
 | --------- | --------------------------------------------------------------------------------------------------------- |
 | `web`     | Provides the web front-end. In development mode, this refreshes is the source code changes.               |
 | `backend` | Provides a sample backend service for testing.                                                            |
-| `redis`   | A [Redis](https://redis.io) instance for maintaining state and coordination between front-end and backend |
 | `ldap`    | An [OpenLDAP](https://www.openldap.org/) server for managing users.                                       |
 
 ## Compile for production
@@ -40,8 +56,6 @@ The platform is distributed as a Docker container build. To trigger the build us
 ```bash
 docker build -t eu.gcr.io/kramergroup/tutorial-frontend -f Dockerfile .
 ```
-
-
 
 ## Repository structure
 
@@ -93,7 +107,7 @@ In addition, a [JSON Web Token](https://jwt.io/) (JWT) is created and stored as 
 
 The backend is accessed through ssh. It is not directly exposed to the client, who is meant to access the backend only through the web-terminal. The frontend effectively acts as a bridge. Communication between client and frontend uses websockets, and communcation between frontend and backend uses ssh. When a client-side in-browser terminal establishes a new websocket connection, the frontend server establishes a new ssh connection to the backend using *hostbased* authentication and the username, determined from the JWT token passed as a cookie. It then forwards data bi-directionally between client and backend.
 
-The platform is designed to work in dynamic environments (i.e., container orchestation). This brings some challenges for *hostbased* ssh authentication, because the backend ssh configuration needs updating if the frontend changes. This is achieved by [hostmgr](https://github.com/kramergroup/hostmgr). *The hostmgr helper has to run on each frontend and each backend* for dynamic ssh configuration to work. Hostmgr uses a [Redis](https://redis.io/) server to maintain and communicate state between frontends and backends. This architecture allows to scale frontend and backends independently.
+The platform is designed to work in dynamic environments (i.e., container orchestation). This brings some challenges for *hostbased* ssh authentication, because the backend ssh configuration cannot rely on stable frontend host configurations. Therefore, certificate-based host authentication is used. Please note that the sample backend configuration is extremely insecure. It is configured to accept any connection from any host that can reach the ssh port and present a signed host certificate. *It is highly recommended to tighten security in production (e.g., by restricting access to a particular domain)*.
 
 ### Persistence
 
@@ -102,5 +116,4 @@ The development environment does not persist any data. This is not advisible for
 | Service   | Folder          | Comment                                                                                                    |
 | --------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
 | `ldap`    | `/var/lib/ldap` | The LDAP data directory contains user information. Note that the folder depends on the used LDAP instance. |
-| `redis`   | `/data`         | The Redis data directory contains state information of the frontend and backend hosts                      |
 | `backend` | `/home`         | The home directories of all users. This should be mounted to an NFS server in most use-cases.              |

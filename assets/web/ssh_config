@@ -1,5 +1,5 @@
 Host *
   HostbasedAuthentication yes
-  StrictHostKeyChecking no
+  StrictHostKeyChecking yes
   EnableSSHKeysign yes
   LogLevel ERROR    
