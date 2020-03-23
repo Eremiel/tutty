@@ -1,11 +1,4 @@
 # -------------------------------------------------------------------------------------------------
-FROM golang:1.10 as hostmgr-builder
-
-RUN git clone https://github.com/kramergroup/hostmgr.git /go/src/github.com/kramergroup/hostmgr
-WORKDIR /go/src/github.com/kramergroup/hostmgr
-RUN CGO_ENABLED=1 go build -o hostmgr cmd/hostmgr/main.go
-
-# -------------------------------------------------------------------------------------------------
 FROM node:10.14.0-stretch as app-builder
 
 RUN apt-get update && \
@@ -41,15 +34,12 @@ RUN apt-get update -y && \
 
 EXPOSE 3000
 
-# Configuration of container 
-ENV REDIS_URL redis://redis:6379
-ENV REDIS_FILTER tutty:
-
 WORKDIR /app
 
 # Configure ssh environment
-COPY --from=hostmgr-builder /go/src/github.com/kramergroup/hostmgr/hostmgr /usr/sbin/hostmgr
 COPY assets/web/ssh_config /etc/ssh/ssh_config
+
+
 
 # Application
 COPY --from=app-builder /app/package.json /app 

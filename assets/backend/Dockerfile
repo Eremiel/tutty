@@ -1,11 +1,5 @@
-FROM golang:1.10
-
-RUN git clone https://github.com/kramergroup/hostmgr.git /go/src/github.com/kramergroup/hostmgr
-WORKDIR /go/src/github.com/kramergroup/hostmgr
-RUN CGO_ENABLED=1 go build -o hostmgr cmd/hostmgr/main.go
-
 FROM debian
-MAINTAINER d.kramer@soton.ac.uk
+LABEL maintainer="d.kramer@soton.ac.uk"
 
 RUN apt-get update -y && \
     apt-get install -y supervisor python bash git nano vim openssh-server && \
@@ -20,14 +14,14 @@ COPY assets/backend/bashrc /etc/skel/.bashrc
 COPY assets/backend/nsswitch.conf /etc/nsswitch.conf
 COPY assets/backend/libnss-ldap.conf /etc/libnss-ldap.conf
 
+# Setup host authentication
+COPY assets/backend/shosts.equiv /etc/ssh/shosts.equiv
+COPY assets/backend/netgroup /etc/netgroup
+
 EXPOSE 3000
 
 WORKDIR /root
 
-ENV REDIS_URL redis://redis:6379
-ENV REDIS_FILTER tutty:
-
-COPY --from=0 /go/src/github.com/kramergroup/hostmgr/hostmgr /usr/sbin/hostmgr
 COPY assets/backend/supervisord.conf /etc/supervisord.conf
 COPY assets/backend/sshd_config /etc/ssh/sshd_config
 

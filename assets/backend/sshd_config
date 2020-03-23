@@ -2,10 +2,14 @@ HostbasedAuthentication yes
 IgnoreUserKnownHosts yes
 IgnoreRhosts yes
 HostbasedUsesNameFromPacketOnly yes
+TrustedUserCAKeys /etc/ssh/ca-local.pub
+
+HostCertificate /etc/ssh/ssh_host_rsa_key-cert.pub
 
 # To disable tunneled clear text passwords, change to no here!
 PasswordAuthentication no
 PermitEmptyPasswords no
+PermitRootLogin no
 
 # Change to yes to enable challenge-response passwords (beware issues with
 # some PAM modules and threads)

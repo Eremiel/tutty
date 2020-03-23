@@ -18,3 +18,8 @@ npm-debug.log
 node_modules
 .esm-cache
 .DS*
+
+# Certificates
+assets/certs/ca/
+assets/certs/config/
+assets/certs/keys/
